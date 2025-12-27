@@ -2,6 +2,9 @@
 #ifndef CGL_CONTEXT_H
 #define CGL_CONTEXT_H
 
+#include "cgl_context.h"
+#include "cgl_screen.h"
+
 typedef struct CGL_Context CGL_Context;
 
 CGL_Context* CGL_CreateContext();

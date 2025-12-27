@@ -2,6 +2,8 @@
 #ifndef CGL_SCREEN_H
 #define CGL_SCREEN_H
 
+#include <SDL2/SDL.h>
+
 typedef struct CGL_Screen CGL_Screen;
 
 typedef int (*CGL_InitScreenFunc)(CGL_Screen *screen);

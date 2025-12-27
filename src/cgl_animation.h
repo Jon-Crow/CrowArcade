@@ -2,6 +2,10 @@
 #ifndef CGL_ANIMATION_H
 #define CGL_ANIMATION_H
 
+#include <stdbool.h>
+
+#include "cgl_spritesheet.h"
+
 typedef struct CGL_Animation CGL_Animation;
 
 CGL_Animation* CGL_InitAnimation(size_t frameCount, int frameTime);

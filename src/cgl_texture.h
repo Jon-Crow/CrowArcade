@@ -2,6 +2,9 @@
 #ifndef CGL_RESOURCES_H
 #define CGL_RESOURCES_H
 
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+
 typedef struct CGL_Texture CGL_Texture;
 typedef struct CGL_TextureRegion CGL_TextureRegion;
 

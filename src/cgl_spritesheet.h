@@ -2,6 +2,11 @@
 #ifndef CGL_SPRITESHEET_H
 #define CGL_SPRITESHEET_H
 
+#include <SDL2/SDL.h>
+
+#include "cgl_texture.h"
+#include "cgl_spritesheet.h"
+
 typedef struct CGL_SpriteSheet CGL_SpriteSheet;
 
 CGL_SpriteSheet* CGL_CreateSpriteSheet(CGL_Texture *tx, int spriteW, int spriteH);

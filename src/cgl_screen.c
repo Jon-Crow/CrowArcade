@@ -1,5 +1,5 @@
 
-#include "cgl.h"
+#include "cgl_screen.h"
 
 struct CGL_Screen {
   CGL_InitScreenFunc init;

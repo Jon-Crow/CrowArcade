@@ -1,5 +1,5 @@
 
-#include "cgl.h"
+#include "cgl_animation.h"
 
 struct CGL_Animation {
   CGL_TextureRegion **frames;

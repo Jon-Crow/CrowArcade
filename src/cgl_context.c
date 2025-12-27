@@ -1,5 +1,7 @@
 
-#include "cgl.h"
+#include "cgl_context.h"
+
+#include "cgl_macros.h"
 
 struct CGL_Context {
   SDL_Window *win;

@@ -1,5 +1,5 @@
 
-#include "cgl.h"
+#include "cgl_texture.h"
 
 struct CGL_Texture {
   SDL_Texture *img;
@@ -184,7 +184,7 @@ void CGL_TextureRegionGetRect(CGL_TextureRegion *reg, SDL_Rect *bounds)
     return;
   if(bounds == NULL)
     return;
-  
+
   bounds->x = reg->rect.x;
   bounds->y = reg->rect.y;
   bounds->w = reg->rect.w;

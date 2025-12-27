@@ -1,5 +1,5 @@
 
-#include "cgl.h"
+#include "cgl_spritesheet.h"
 
 struct CGL_SpriteSheet {
   CGL_Texture *tx;
