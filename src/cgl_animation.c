@@ -8,8 +8,7 @@ struct CGL_Animation {
   int frameTime;
 };
 
-/*
-CGL_Animation* CGL_InitAnimation(size_t frameCount)
+CGL_Animation* CGL_InitAnimation(size_t frameCount, int frameTime)
 {
   CGL_Animation* anim = (CGL_Animation*)malloc(sizeof(CGL_Animation));
   if(anim == NULL)
@@ -17,27 +16,42 @@ CGL_Animation* CGL_InitAnimation(size_t frameCount)
 
   anim->frames = (CGL_TextureRegion**)malloc(frameCount * sizeof(CGL_TextureRegion*));
   if(anim->frames == NULL)
-  {
-    free(anim);
     return NULL;
-  }
 
   for(size_t i = 0; i < frameCount; i++)
   {
-    anim->frames[i] = (CGL_TextureRegion*)malloc(sizeof(CGL_TextureRegion));
+    anim->frames[i] = CGL_InitTextureRegion();
     if(anim->frames[i] == NULL)
+      return NULL;
+  }
+
+  anim->curFrame = 0;
+  anim->frameTime = frameTime;
+
+  return anim;
+}
+
+CGL_Animation* CGL_AnimationFromRows(CGL_SpriteSheet* sheet, int startRow, int endRow, int frameTime)
+{
+  int cols = CGL_SpriteSheetGetColumns(sheet);
+  size_t frameCount = cols * (endRow - startRow);
+  
+  CGL_Animation *anim = CGL_InitAnimation(frameCount, frameTime);
+  if(anim == NULL)
+    return NULL;
+
+  int frameIdx = 0;
+  for(int y = startRow; y < endRow; y++)
+  {
+    for(int x = 0; x < cols; x++)
     {
-      for(size_t x = i-1; x >= 0; x--)
-        free(anim->frames[i]);
-      free(anim->frames);
-      free(anim);
-      return;
+      anim->frames[frameIdx] = CGL_SpriteSheetCreateSpriteAt(sheet, x, y);
+      frameIdx++;
     }
   }
 
   return anim;
 }
-*/
 
 void CGL_DestroyAnimation(CGL_Animation *anim)
 {

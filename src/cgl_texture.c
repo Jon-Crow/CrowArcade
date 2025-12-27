@@ -12,6 +12,22 @@ struct CGL_TextureRegion {
   SDL_Rect rect;
 };
 
+CGL_TextureRegion* CGL_InitTextureRegion()
+{
+  CGL_TextureRegion *reg = (CGL_TextureRegion*)malloc(sizeof(CGL_TextureRegion));
+  if(reg == NULL)
+    return NULL;
+
+  reg->tx = NULL;
+  reg->rect = (SDL_Rect){
+    .x = 0,
+    .y = 0,
+    .w = 0,
+    .h = 0
+  };
+
+  return reg;
+}
 CGL_TextureRegion* CGL_CreateTextureRegion(CGL_Texture *tx, const SDL_Rect *rect)
 {
   if(tx == NULL)

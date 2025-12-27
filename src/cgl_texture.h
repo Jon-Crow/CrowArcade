@@ -5,6 +5,8 @@
 typedef struct CGL_Texture CGL_Texture;
 typedef struct CGL_TextureRegion CGL_TextureRegion;
 
+CGL_TextureRegion* CGL_InitTextureRegion();
+
 CGL_TextureRegion* CGL_CreateTextureRegion(CGL_Texture *tx, const SDL_Rect *rect);
 
 CGL_Texture* CGL_LoadTexture(SDL_Renderer *rend, const char *path);
