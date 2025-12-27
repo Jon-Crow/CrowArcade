@@ -7,6 +7,8 @@ struct CGL_Animation {
   size_t curFrame;
   int frameTime;
   int clock;
+  bool loop;
+  bool done;
 };
 
 CGL_Animation* CGL_InitAnimation(size_t frameCount, int frameTime)
@@ -30,11 +32,13 @@ CGL_Animation* CGL_InitAnimation(size_t frameCount, int frameTime)
   anim->curFrame = 0;
   anim->frameTime = frameTime;
   anim->clock = 0;
+  anim->loop = false;
+  anim->done = false;
 
   return anim;
 }
 
-CGL_Animation* CGL_AnimationFromRows(CGL_SpriteSheet* sheet, int startRow, int endRow, int frameTime)
+CGL_Animation* CGL_AnimationFromRows(CGL_SpriteSheet* sheet, int startRow, int endRow, int frameTime, bool loop)
 {
   int cols = CGL_SpriteSheetGetColumns(sheet);
   size_t frameCount = cols * (endRow - startRow);
@@ -53,6 +57,8 @@ CGL_Animation* CGL_AnimationFromRows(CGL_SpriteSheet* sheet, int startRow, int e
       frameIdx++;
     }
   }
+
+  anim->loop = loop;
 
   return anim;
 }
@@ -82,9 +88,24 @@ void CGL_AnimationUpdate(CGL_Animation *anim)
     anim->clock = 0;
     anim->curFrame++;
     if(anim->curFrame >= anim->frameCount)
-      anim->curFrame = 0;
+    {
+      if(anim->loop)
+        anim->curFrame = 0;
+      else
+      {
+        anim->curFrame = anim->frameCount-1;
+        anim->done = true;
+      }
+    }
     printf("Current frame: %zu (frame count is %zu)\n", anim->curFrame, anim->frameCount);
   }
+}
+
+bool CGL_AnimationIsDone(CGL_Animation *anim)
+{
+  if(anim == NULL)
+    return false;
+  return anim->done;
 }
 
 void CGL_DestroyAnimation(CGL_Animation *anim)

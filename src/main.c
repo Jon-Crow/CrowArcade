@@ -1,107 +1,20 @@
 
 #include <unistd.h>
 
-#include "macros.h"
 #include "cgl.h"
 
-typedef struct {
-  CGL_Animation *splash;
-  int timer;
-} SplashScreenData;
-
-int SplashScreenInit(CGL_Screen *screen)
-{
-  CGL_Texture *tx = CGL_LoadTexture(CGL_ScreenGetRenderer(screen), "../res/texture/stay_storm.png");
-  if(tx == NULL)
-    return -1;
-
-  CGL_SpriteSheet *sheet = CGL_CreateSpriteSheet(tx, 224, 288);
-  if(sheet == NULL)
-  {
-    CGL_DestroyTexture(tx);
-    return -1;
-  }
-
-  CGL_Animation *splash = CGL_AnimationFromRows(sheet, 0, 2, 7);
-  if(splash == NULL)
-  {
-    CGL_DestroySpriteSheet(sheet);
-    CGL_DestroyTexture(tx);
-    return -1;
-  }
-  
-  SplashScreenData *data = (SplashScreenData*)malloc(sizeof(SplashScreenData));
-  if(data == NULL)
-  {
-    CGL_DestroyAnimation(splash);
-    CGL_DestroySpriteSheet(sheet);
-    CGL_DestroyTexture(tx);
-    return -1;
-  }
-
-  data->splash = splash;
-  data->timer = 60*5;
-  CGL_ScreenSetData(screen, data);
-
-  CGL_DestroySpriteSheet(sheet);
-  return 0;
-}
-
-void SplashScreenUpdate(CGL_Screen *screen)
-{
-  SplashScreenData *data = CGL_ScreenGetData(screen);
-  CGL_AnimationUpdate(data->splash);
-}
-
-void SplashScreenRender(CGL_Screen *screen)
-{
-  SplashScreenData *data = CGL_ScreenGetData(screen);
-
-  CGL_TextureRegion *frame = CGL_AnimationGetCurrentFrame(data->splash);
-  if(frame == NULL)
-    return;
-
-  SDL_Rect srcRect = {0, 0, 0, 0};
-  SDL_Rect dstRect = {0, 0, GAME_WIDTH, GAME_HEIGHT};
-
-  CGL_TextureRegionGetRect(frame, &srcRect);
-
-  SDL_RenderCopy(CGL_ScreenGetRenderer(screen), CGL_TextureRegionGetImage(frame), &srcRect, &dstRect);
-}
-
-void SplashScreenDestroy(CGL_Screen *screen)
-{
-  SplashScreenData *data = CGL_ScreenGetData(screen);
-
-  if(data == NULL)
-    return;
-
-  if(data->splash != NULL)
-  {
-    CGL_TextureRegion *frame = CGL_AnimationGetFrame(data->splash, 0);
-    if(frame != NULL)
-    {
-      CGL_Texture *tx = CGL_TextureRegionGetTexture(frame);
-      if(tx != NULL)
-      {
-        SDL_Texture *img = CGL_TextureGetImage(tx);
-        if(img != NULL)
-          SDL_DestroyTexture(img);
-      }
-    }
-    CGL_DestroyAnimation(data->splash);
-  }
-  
-  free(data);
-}
+#include "splash_screen.h"
 
 int main(void)
 {
+  CGL_Context *ctx;
   SDL_Window *win;
   SDL_Renderer *rend;
   SDL_Texture *gameTx;
-  SDL_Event evt;
   CGL_Screen *screen;
+  SDL_Event evt;
+  int screenW;
+  int screenH;
 
   printf("Initializing SDL... ");
 
@@ -114,35 +27,17 @@ int main(void)
 
   SDL_ShowCursor(SDL_DISABLE);
 
-  printf("Creating window... ");
-  if(SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN, &win, &rend))
+  ctx = CGL_CreateContext();
+  if(ctx == NULL)
   {
-    printf("failed: %s\n", SDL_GetError());
     SDL_Quit();
     return -1;
   }
-  printf("done.\n");
 
-  int screenW, 
-      screenH;
-  SDL_GetRendererOutputSize(rend, &screenW, &screenH);
-  printf("Renderer size: %d x %d\n", screenW, screenH);
-
-  printf("Creating game texture... ");
-  gameTx = SDL_CreateTexture(rend, 
-                             SDL_PIXELFORMAT_RGBA8888, 
-                             SDL_TEXTUREACCESS_TARGET,
-                             GAME_WIDTH,
-                             GAME_HEIGHT);
-  if(gameTx == NULL)
-  {
-    printf("failed: %s\n", SDL_GetError());
-    SDL_DestroyRenderer(rend);
-    SDL_DestroyWindow(win);
-    SDL_Quit();
-    return -1;
-  }
-  printf("done.\n");
+  win = CGL_ContextGetWindow(ctx);
+  rend = CGL_ContextGetRenderer(ctx);
+  gameTx = CGL_ContextGetGameTexture(ctx);
+  CGL_ContextGetScreenSize(ctx, &screenW, &screenH);
 
   printf("Creating splash screen... ");
   screen = CGL_CreateScreen(SplashScreenInit,
@@ -209,10 +104,7 @@ int main(void)
   }
 
   printf("Exiting\n");
-  CGL_DestroyScreen(screen);
-  SDL_DestroyTexture(gameTx);
-  SDL_DestroyRenderer(rend);
-  SDL_DestroyWindow(win);
+  CGL_DestroyContext(ctx);
   SDL_Quit();
 
   return 0;
