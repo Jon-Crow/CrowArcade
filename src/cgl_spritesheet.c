@@ -59,6 +59,31 @@ void CGL_SpriteSheetGetGridSize(CGL_SpriteSheet *sheet, int *rows, int *cols)
   *cols = sheet->cols;
 }
 
+void CGL_SpriteSheetGetRectAt(CGL_SpriteSheet *sheet, int col, int row, SDL_Rect *rect)
+{
+  rect->x = sheet->spriteW * col;
+  rect->y = sheet->spriteH * row;
+  rect->w = sheet->spriteW;
+  rect->h = sheet->spriteH;
+}
+SDL_Rect CGL_SpriteSheetCreateRectAt(CGL_SpriteSheet *sheet, int col, int row)
+{
+  SDL_Rect rect;
+  CGL_SpriteSheetGetRectAt(sheet, col, row, &rect);
+  return rect;
+}
+void CGL_SpriteSheetGetSpriteAt(CGL_SpriteSheet *sheet, int col, int row, CGL_TextureRegion *reg)
+{
+  SDL_Rect rect = CGL_SpriteSheetCreateRectAt(sheet, col, row);
+  CGL_TextureRegionSetTexture(reg, sheet->tx);
+  CGL_TextureRegionSetRect(reg, &rect);
+}
+CGL_TextureRegion* CGL_SpriteSheetCreateSpriteAt(CGL_SpriteSheet *sheet, int row, int col)
+{
+  SDL_Rect rect = CGL_SpriteSheetCreateRectAt(sheet, col, row);
+  return CGL_CreateTextureRegion(sheet->tx, &rect);
+}
+
 void CGL_DestroySpriteSheet(CGL_SpriteSheet *sheet)
 {
   if(sheet != NULL)

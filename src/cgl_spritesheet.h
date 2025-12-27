@@ -14,6 +14,11 @@ int CGL_SpriteSheetGetRows(CGL_SpriteSheet *sheet);
 int CGL_SpriteSheetGetColumns(CGL_SpriteSheet *sheet);
 void CGL_SpriteSheetGetGridSize(CGL_SpriteSheet *sheet, int *rows, int *cols);
 
+void CGL_SpriteSheetGetRectAt(CGL_SpriteSheet *sheet, int col, int row, SDL_Rect *rect);
+SDL_Rect CGL_SpriteSheetCreateRectAt(CGL_SpriteSheet *sheet, int col, int row);
+void CGL_SpriteSheetGetSpriteAt(CGL_SpriteSheet *sheet, int col, int row, CGL_TextureRegion *reg);
+CGL_TextureRegion* CGL_SpriteSheetCreateSpriteAt(CGL_SpriteSheet *sheet, int col, int row);
+
 void CGL_DestroySpriteSheet(CGL_SpriteSheet *sheet);
 
 #endif
