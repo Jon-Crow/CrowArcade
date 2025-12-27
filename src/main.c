@@ -1,7 +1,7 @@
 
 #include <unistd.h>
 
-#include "cgl.h"
+#include "cgl/cgl.h"
 
 #include "splash_screen.h"
 

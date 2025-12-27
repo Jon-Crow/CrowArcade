@@ -2,7 +2,7 @@
 #ifndef MENU_SCREEN_H
 #define MENU_SCREEN_H
 
-#include "cgl.h"
+#include "cgl/cgl.h"
 
 int MenuScreenInit(CGL_Screen *screen);
 void MenuScreenUpdate(CGL_Screen *screen);
