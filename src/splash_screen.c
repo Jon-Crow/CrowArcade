@@ -65,20 +65,11 @@ void SplashScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
   }
 }
 
-void SplashScreenRender(CGL_Screen *screen)
+void SplashScreenRender(CGL_Screen *screen, CGL_Context *ctx)
 {
   SplashScreenData *data = CGL_ScreenGetData(screen);
 
-  CGL_TextureRegion *frame = CGL_AnimationGetCurrentFrame(data->splash);
-  if(frame == NULL)
-    return;
-
-  SDL_Rect srcRect = {0, 0, 0, 0};
-  SDL_Rect dstRect = {0, 0, GAME_WIDTH, GAME_HEIGHT};
-
-  CGL_TextureRegionGetRect(frame, &srcRect);
-
-  SDL_RenderCopy(CGL_ScreenGetRenderer(screen), CGL_TextureRegionGetImage(frame), &srcRect, &dstRect);
+  CGL_DrawAnimation(ctx, data->splash, 0, 0, GAME_WIDTH, GAME_HEIGHT);
 }
 
 void SplashScreenDestroy(CGL_Screen *screen)

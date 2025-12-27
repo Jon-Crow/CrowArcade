@@ -61,10 +61,10 @@ void CGL_ScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
     screen->update(screen, ctx);
 }
 
-void CGL_ScreenRender(CGL_Screen *screen)
+void CGL_ScreenRender(CGL_Screen *screen, CGL_Context *ctx)
 {
   if(screen != NULL)
-    screen->render(screen);
+    screen->render(screen, ctx);
 }
 
 void CGL_DestroyScreen(CGL_Screen *screen)

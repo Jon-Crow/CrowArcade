@@ -6,7 +6,7 @@
 
 int SplashScreenInit(CGL_Screen *screen);
 void SplashScreenUpdate(CGL_Screen *screen, CGL_Context *ctx);
-void SplashScreenRender(CGL_Screen *screen);
+void SplashScreenRender(CGL_Screen *screen, CGL_Context *ctx);
 void SplashScreenDestroy(CGL_Screen *screen);
 
 #endif

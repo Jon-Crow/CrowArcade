@@ -149,7 +149,7 @@ int main(void)
 
     CGL_ScreenUpdate(screen, ctx);
     screen = CGL_ContextGetScreen(ctx);
-    CGL_ScreenRender(screen);
+    CGL_ScreenRender(screen, ctx);
 
     SDL_SetRenderTarget(rend, NULL);
     SDL_RenderSetViewport(rend, NULL);
