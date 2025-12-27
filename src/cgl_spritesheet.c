@@ -78,7 +78,7 @@ void CGL_SpriteSheetGetSpriteAt(CGL_SpriteSheet *sheet, int col, int row, CGL_Te
   CGL_TextureRegionSetTexture(reg, sheet->tx);
   CGL_TextureRegionSetRect(reg, &rect);
 }
-CGL_TextureRegion* CGL_SpriteSheetCreateSpriteAt(CGL_SpriteSheet *sheet, int row, int col)
+CGL_TextureRegion* CGL_SpriteSheetCreateSpriteAt(CGL_SpriteSheet *sheet, int col, int row)
 {
   SDL_Rect rect = CGL_SpriteSheetCreateRectAt(sheet, col, row);
   return CGL_CreateTextureRegion(sheet->tx, &rect);

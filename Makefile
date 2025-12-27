@@ -2,7 +2,7 @@
 SRC_DIR   = src
 BUILD_DIR = build
 
-GCC_OPTS = -g -O0 -Wall -Wextra -Wpedantic
+GCC_OPTS = -g -O0 -fno-omit-frame-pointer -Wall -Wextra -Wpedantic
 LIBS     = -lSDL2_image
 
 compile:

@@ -17,6 +17,7 @@ int CGL_TextureGetHeight(CGL_Texture *tx);
 void CGL_TextureGetSize(CGL_Texture *tx, int *width, int *height);
 
 CGL_Texture* CGL_TextureRegionGetTexture(CGL_TextureRegion *reg);
+SDL_Texture* CGL_TextureRegionGetImage(CGL_TextureRegion *reg);
 void CGL_TextureRegionSetTexture(CGL_TextureRegion *reg, CGL_Texture *tx);
 
 int CGL_TextureRegionGetX(CGL_TextureRegion *reg);

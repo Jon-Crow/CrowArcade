@@ -100,6 +100,11 @@ CGL_Texture* CGL_TextureRegionGetTexture(CGL_TextureRegion *reg)
 {
   return reg->tx;
 }
+SDL_Texture* CGL_TextureRegionGetImage(CGL_TextureRegion *reg)
+{
+  CGL_Texture *tx = CGL_TextureRegionGetTexture(reg);
+  return CGL_TextureGetImage(tx);
+}
 void CGL_TextureRegionSetTexture(CGL_TextureRegion *reg, CGL_Texture *tx)
 {
   reg->tx = tx;
@@ -175,6 +180,11 @@ void CGL_TextureRegionSetBounds(CGL_TextureRegion *reg, int x, int y, int width,
 }
 void CGL_TextureRegionGetRect(CGL_TextureRegion *reg, SDL_Rect *bounds)
 {
+  if(reg == NULL)
+    return;
+  if(bounds == NULL)
+    return;
+  
   bounds->x = reg->rect.x;
   bounds->y = reg->rect.y;
   bounds->w = reg->rect.w;
