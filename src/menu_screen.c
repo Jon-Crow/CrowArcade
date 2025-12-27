@@ -6,7 +6,7 @@ int MenuScreenInit(CGL_Screen *screen)
   return 0;
 }
 
-void MenuScreenUpdate(CGL_Screen *screen)
+void MenuScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
 {
 
 }

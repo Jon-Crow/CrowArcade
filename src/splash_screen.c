@@ -45,7 +45,7 @@ int SplashScreenInit(CGL_Screen *screen)
   return 0;
 }
 
-void SplashScreenUpdate(CGL_Screen *screen)
+void SplashScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
 {
   SplashScreenData *data = CGL_ScreenGetData(screen);
   CGL_AnimationUpdate(data->splash);

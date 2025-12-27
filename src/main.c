@@ -90,7 +90,7 @@ int main(void)
     SDL_SetRenderDrawColor(rend, 0, 0, 0, 255);
     SDL_RenderClear(rend);
 
-    CGL_ScreenUpdate(screen);
+    CGL_ScreenUpdate(screen, ctx);
     CGL_ScreenRender(screen);
 
     SDL_SetRenderTarget(rend, NULL);

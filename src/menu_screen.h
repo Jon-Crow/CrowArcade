@@ -5,7 +5,7 @@
 #include "cgl/cgl.h"
 
 int MenuScreenInit(CGL_Screen *screen);
-void MenuScreenUpdate(CGL_Screen *screen);
+void MenuScreenUpdate(CGL_Screen *screen, CGL_Context *ctx);
 void MenuScreenRender(CGL_Screen *screen);
 void MenuScreenDestroy(CGL_Screen *screen);
 

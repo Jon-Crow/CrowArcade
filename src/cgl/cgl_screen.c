@@ -55,10 +55,10 @@ int CGL_ScreenInit(CGL_Screen *screen)
   return screen->init(screen);
 }
 
-void CGL_ScreenUpdate(CGL_Screen *screen)
+void CGL_ScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
 {
   if(screen != NULL)
-    screen->update(screen);
+    screen->update(screen, ctx);
 }
 
 void CGL_ScreenRender(CGL_Screen *screen)

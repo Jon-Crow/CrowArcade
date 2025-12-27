@@ -4,10 +4,12 @@
 
 #include <SDL2/SDL.h>
 
+#include "cgl_context.h"
+
 typedef struct CGL_Screen CGL_Screen;
 
 typedef int (*CGL_InitScreenFunc)(CGL_Screen *screen);
-typedef void (*CGL_UpdateScreenFunc)(CGL_Screen *screen);
+typedef void (*CGL_UpdateScreenFunc)(CGL_Screen *screen, CGL_Context *ctx);
 typedef void (*CGL_RenderScreenFunc)(CGL_Screen *screen);
 typedef void (*CGL_DestroyScreenFunc)(CGL_Screen *screen);
 
@@ -23,7 +25,7 @@ void* CGL_ScreenGetData(CGL_Screen *screen);
 void CGL_ScreenSetData(CGL_Screen *screen, void *data);
 
 int CGL_ScreenInit(CGL_Screen *screen);
-void CGL_ScreenUpdate(CGL_Screen *screen);
+void CGL_ScreenUpdate(CGL_Screen *screen, CGL_Context *ctx);
 void CGL_ScreenRender(CGL_Screen *screen);
 
 void CGL_DestroyScreen(CGL_Screen *screen);
