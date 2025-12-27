@@ -10,6 +10,7 @@ struct CGL_Context {
   CGL_Screen *screen;
   int screenW;
   int screenH;
+  bool input[CGL_INPUT_COUNT];
 };
 
 CGL_Context* CGL_CreateContext()
@@ -22,6 +23,9 @@ CGL_Context* CGL_CreateContext()
   ctx->rend = NULL;
   ctx->gameTx = NULL;
   ctx->screen = NULL;
+
+  for(int i = 0; i < CGL_INPUT_COUNT; i++)
+    ctx->input[i] = false;
 
   printf("Creating window... ");
   if(SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN, &(ctx->win), &(ctx->rend)))
@@ -82,6 +86,19 @@ void CGL_ContextGetScreenSize(CGL_Context *ctx, int *screenW, int *screenH)
 {
   *screenW = ctx->screenW;
   *screenH = ctx->screenH;
+}
+
+bool CGL_ContextGetInput(CGL_Context *ctx, size_t idx)
+{
+  if(idx >= CGL_INPUT_COUNT)
+    return false;
+  return ctx->input[idx];
+}
+
+void CGL_ContextSetInput(CGL_Context *ctx, size_t idx, bool val)
+{
+  if(idx < CGL_INPUT_COUNT)
+    ctx->input[idx] = val;
 }
 
 void CGL_DestroyContext(CGL_Context *ctx)

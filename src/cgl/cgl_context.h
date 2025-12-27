@@ -2,8 +2,16 @@
 #ifndef CGL_CONTEXT_H
 #define CGL_CONTEXT_H
 
+#include <stdbool.h>
+
 #include "cgl_context.h"
 #include "cgl_screen.h"
+
+#define CGL_INPUT_COUNT (4)
+#define CGL_INPUT_UP (0)
+#define CGL_INPUT_LEFT (1)
+#define CGL_INPUT_DOWN (2)
+#define CGL_INPUT_RIGHT (3)
 
 typedef struct CGL_Context CGL_Context;
 
@@ -15,6 +23,8 @@ SDL_Texture* CGL_ContextGetGameTexture(CGL_Context *ctx);
 CGL_Screen* CGL_ContextGetScreen(CGL_Context *ctx);
 void CGL_ContextSetScreen(CGL_Context *ctx, CGL_Screen *screen);
 void CGL_ContextGetScreenSize(CGL_Context *ctx, int *screenW, int *screenH);
+bool CGL_ContextGetInput(CGL_Context *ctx, size_t idx);
+void CGL_ContextSetInput(CGL_Context *ctx, size_t idx, bool val);
 
 void CGL_DestroyContext(CGL_Context *ctx);
 

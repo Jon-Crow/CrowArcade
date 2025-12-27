@@ -1,4 +1,5 @@
 
+#include <stdbool.h>
 #include <unistd.h>
 
 #include "cgl/cgl.h"
@@ -77,13 +78,65 @@ int main(void)
     .x = (screenW - screenH) / 2, 
     .y = (screenH - screenW) / 2
   };
-  int quit = 0;
-  while(quit == 0)
+  bool run = true;
+  while(run)
   {
     while(SDL_PollEvent(&evt))
     {
       if(evt.type == SDL_KEYDOWN)
-        quit = 1;
+      {
+        switch(evt.key.keysym.sym)
+        {
+          case SDLK_ESCAPE:
+            run = false;
+            break;
+          
+          case SDLK_w:
+          case SDLK_UP:
+            CGL_ContextSetInput(ctx, CGL_INPUT_UP, true);
+            break;
+
+          case SDLK_a:
+          case SDLK_LEFT:
+            CGL_ContextSetInput(ctx, CGL_INPUT_LEFT, true);
+            break;
+
+          case SDLK_s:
+          case SDLK_DOWN:
+            CGL_ContextSetInput(ctx, CGL_INPUT_DOWN, true);
+            break;
+
+          case SDLK_d:
+          case SDLK_RIGHT:
+            CGL_ContextSetInput(ctx, CGL_INPUT_RIGHT, true);
+            break;
+        }
+      }
+      else if(evt.type == SDL_KEYUP)
+      {
+        switch(evt.key.keysym.sym)
+        {
+          case SDLK_w:
+          case SDLK_UP:
+            CGL_ContextSetInput(ctx, CGL_INPUT_UP, false);
+            break;
+
+          case SDLK_a:
+          case SDLK_LEFT:
+            CGL_ContextSetInput(ctx, CGL_INPUT_LEFT, false);
+            break;
+
+          case SDLK_s:
+          case SDLK_DOWN:
+            CGL_ContextSetInput(ctx, CGL_INPUT_DOWN, false);
+            break;
+
+          case SDLK_d:
+          case SDLK_RIGHT:
+            CGL_ContextSetInput(ctx, CGL_INPUT_RIGHT, false);
+            break;
+        }
+      }
     }
 
     screen = CGL_ContextGetScreen(ctx);
