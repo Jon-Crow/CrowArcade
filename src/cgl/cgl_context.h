@@ -25,6 +25,9 @@ void CGL_ContextSetScreen(CGL_Context *ctx, CGL_Screen *screen);
 void CGL_ContextGetScreenSize(CGL_Context *ctx, int *screenW, int *screenH);
 bool CGL_ContextGetInput(CGL_Context *ctx, size_t idx);
 void CGL_ContextSetInput(CGL_Context *ctx, size_t idx, bool val);
+void CGL_ContextUpdateInput(CGL_Context *ctx);
+bool CGL_ContextInputJustSet(CGL_Context *ctx, size_t idx);
+bool CGL_ContextInputJustReset(CGL_Context *ctx, size_t idx);
 
 void CGL_DestroyContext(CGL_Context *ctx);
 

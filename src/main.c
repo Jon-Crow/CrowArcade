@@ -158,6 +158,8 @@ int main(void)
 
     SDL_RenderPresent(rend);
 
+    CGL_ContextUpdateInput(ctx);
+
     SDL_Delay(16);
   }
 

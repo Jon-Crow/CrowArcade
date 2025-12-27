@@ -11,6 +11,7 @@ struct CGL_Context {
   int screenW;
   int screenH;
   bool input[CGL_INPUT_COUNT];
+  bool prevInput[CGL_INPUT_COUNT];
 };
 
 CGL_Context* CGL_CreateContext()
@@ -25,7 +26,10 @@ CGL_Context* CGL_CreateContext()
   ctx->screen = NULL;
 
   for(int i = 0; i < CGL_INPUT_COUNT; i++)
+  {
     ctx->input[i] = false;
+    ctx->prevInput[i] = false;
+  }
 
   printf("Creating window... ");
   if(SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN, &(ctx->win), &(ctx->rend)))
@@ -99,6 +103,26 @@ void CGL_ContextSetInput(CGL_Context *ctx, size_t idx, bool val)
 {
   if(idx < CGL_INPUT_COUNT)
     ctx->input[idx] = val;
+}
+
+void CGL_ContextUpdateInput(CGL_Context *ctx)
+{
+  for(int i = 0; i < CGL_INPUT_COUNT; i++)
+    ctx->prevInput[i] = ctx->input[i];
+}
+
+bool CGL_ContextInputJustSet(CGL_Context *ctx, size_t idx)
+{
+  if(idx >= CGL_INPUT_COUNT)
+    return false;
+  return ctx->input[idx] && !ctx->prevInput[idx];
+}
+
+bool CGL_ContextInputJustReset(CGL_Context *ctx, size_t idx)
+{
+  if(idx >= CGL_INPUT_COUNT)
+    return false;
+  return !ctx->input[idx] && ctx->prevInput[idx];
 }
 
 void CGL_DestroyContext(CGL_Context *ctx)
