@@ -73,7 +73,7 @@ CGL_Screen* CGL_ContextGetScreen(CGL_Context *ctx)
 
 void CGL_ContextSetScreen(CGL_Context *ctx, CGL_Screen *screen)
 {
-  if(ctx->screen == NULL)
+  if(ctx->screen != NULL)
     CGL_DestroyScreen(ctx->screen);
   ctx->screen = screen;
 }

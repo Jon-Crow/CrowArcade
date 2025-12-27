@@ -56,6 +56,8 @@ int main(void)
   }
   printf("done.\n");
 
+  CGL_ContextSetScreen(ctx, screen);
+
   printf("Initializing splash screen... ");
   if(CGL_ScreenInit(screen))
   {
@@ -84,6 +86,8 @@ int main(void)
         quit = 1;
     }
 
+    screen = CGL_ContextGetScreen(ctx);
+
     SDL_SetRenderTarget(rend, gameTx);
     SDL_RenderSetViewport(rend, NULL);
 
@@ -91,6 +95,7 @@ int main(void)
     SDL_RenderClear(rend);
 
     CGL_ScreenUpdate(screen, ctx);
+    screen = CGL_ContextGetScreen(ctx);
     CGL_ScreenRender(screen);
 
     SDL_SetRenderTarget(rend, NULL);

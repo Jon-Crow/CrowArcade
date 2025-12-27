@@ -97,7 +97,6 @@ void CGL_AnimationUpdate(CGL_Animation *anim)
         anim->done = true;
       }
     }
-    printf("Current frame: %zu (frame count is %zu)\n", anim->curFrame, anim->frameCount);
   }
 }
 

@@ -52,7 +52,16 @@ void SplashScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
 
   if(CGL_AnimationIsDone(data->splash))
   {
-    
+    printf("switching to menu screen\n");
+    CGL_Screen *menu = CGL_CreateScreen(MenuScreenInit,
+                                        MenuScreenUpdate,
+                                        MenuScreenRender,
+                                        MenuScreenDestroy,
+                                        CGL_ContextGetRenderer(ctx));
+    if(menu != NULL)
+      CGL_ContextSetScreen(ctx, menu);
+    else
+      printf("Failed to create menu screen.\n");
   }
 }
 

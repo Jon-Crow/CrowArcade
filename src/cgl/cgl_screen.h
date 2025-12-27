@@ -4,8 +4,7 @@
 
 #include <SDL2/SDL.h>
 
-#include "cgl_context.h"
-
+typedef struct CGL_Context CGL_Context;
 typedef struct CGL_Screen CGL_Screen;
 
 typedef int (*CGL_InitScreenFunc)(CGL_Screen *screen);
