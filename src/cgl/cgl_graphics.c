@@ -1,6 +1,8 @@
 
 #include "cgl_graphics.h"
 
+#include <string.h>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
@@ -67,4 +69,33 @@ void CGL_DrawAnimation(CGL_Context *ctx, CGL_Animation *anim, int x, int y, int 
   CGL_TextureRegion *frame = CGL_AnimationGetCurrentFrame(anim);
   if(frame != NULL)
     CGL_DrawTextureRegion(ctx, frame, x, y, w, h);
+}
+
+void CGL_DrawString(CGL_Context *ctx, CGL_Font *font, const char *str, int x, int y, int charW, int charH, int r, int g, int b)
+{
+  if(font == NULL)
+    return;
+
+  CGL_SpriteSheet *sheet = CGL_FontGetSpriteSheet(font);
+  if(sheet == NULL)
+    return;
+
+  SDL_Texture *img = CGL_SpriteSheetGetImage(sheet);
+  if(img == NULL)
+    return;
+
+  CGL_TextureRegion *reg = CGL_InitTextureRegion();
+
+  SDL_SetTextureColorMod(img, r, g, b);
+
+  int len = strlen(str);
+  for(int i = 0; i < len; i++)
+  {
+    CGL_FontGetGlyph(font, str[i], reg);
+    CGL_DrawTextureRegion(ctx, reg, x+i*charW, y, charW, charH);
+  }
+
+  SDL_SetTextureColorMod(img, 255, 255, 255);
+
+  CGL_DestroyTextureRegion(reg);
 }

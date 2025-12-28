@@ -2,10 +2,12 @@
 
 #include "menu_screen.h"
 
-typedef struct {
+typedef struct SplashScreenData SplashScreenData;
+
+struct SplashScreenData {
   CGL_Animation *splash;
   int timer;
-} SplashScreenData;
+};
 
 int SplashScreenInit(CGL_Screen *screen)
 {

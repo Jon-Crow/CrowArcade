@@ -27,6 +27,18 @@ CGL_SpriteSheet* CGL_CreateSpriteSheet(CGL_Texture *tx, int spriteW, int spriteH
   return sheet;
 }
 
+CGL_Texture* CGL_SpriteSheetGetTexture(CGL_SpriteSheet *sheet)
+{
+  return sheet->tx;
+}
+
+SDL_Texture* CGL_SpriteSheetGetImage(CGL_SpriteSheet *sheet)
+{
+  if(sheet->tx == NULL)
+    return NULL;
+  return CGL_TextureGetImage(sheet->tx);
+}
+
 int CGL_SpriteSheetGetSpriteWidth(CGL_SpriteSheet *sheet)
 {
   return sheet->spriteW;
@@ -66,18 +78,28 @@ void CGL_SpriteSheetGetRectAt(CGL_SpriteSheet *sheet, int col, int row, SDL_Rect
   rect->w = sheet->spriteW;
   rect->h = sheet->spriteH;
 }
+
 SDL_Rect CGL_SpriteSheetCreateRectAt(CGL_SpriteSheet *sheet, int col, int row)
 {
   SDL_Rect rect;
   CGL_SpriteSheetGetRectAt(sheet, col, row, &rect);
   return rect;
 }
+
 void CGL_SpriteSheetGetSpriteAt(CGL_SpriteSheet *sheet, int col, int row, CGL_TextureRegion *reg)
 {
   SDL_Rect rect = CGL_SpriteSheetCreateRectAt(sheet, col, row);
   CGL_TextureRegionSetTexture(reg, sheet->tx);
   CGL_TextureRegionSetRect(reg, &rect);
 }
+
+void CGL_SpriteSheetGetSpriteAtIndex(CGL_SpriteSheet *sheet, int idx, CGL_TextureRegion *reg)
+{
+  int col = idx % sheet->cols;
+  int row = idx / sheet->cols;
+  CGL_SpriteSheetGetSpriteAt(sheet, col, row, reg);
+}
+
 CGL_TextureRegion* CGL_SpriteSheetCreateSpriteAt(CGL_SpriteSheet *sheet, int col, int row)
 {
   SDL_Rect rect = CGL_SpriteSheetCreateRectAt(sheet, col, row);

@@ -15,5 +15,6 @@
 #include "cgl_texture.h"
 #include "cgl_spritesheet.h"
 #include "cgl_animation.h"
+#include "cgl_font.h"
 
 #endif
