@@ -1,10 +1,14 @@
 
 #include "menu_screen.h"
 
+#include <stdlib.h>
+
 typedef struct MenuScreenData MenuScreenData;
 
 struct MenuScreenData {
   CGL_Font *font;
+  SDL_Color titleClr;
+  int titleTime;
 };
 
 int MenuScreenInit(CGL_Screen *screen)
@@ -38,20 +42,39 @@ int MenuScreenInit(CGL_Screen *screen)
   }
 
   data->font = font;
+  data->titleClr = (SDL_Color){
+    .r = 255,
+    .g = 0,
+    .b = 0,
+    .a = 255
+  };
+  data->titleTime = 0;
   CGL_ScreenSetData(screen, data);
   return 0;
 }
 
 void MenuScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
 {
+  MenuScreenData *data = CGL_ScreenGetData(screen);
 
+  data->titleTime++;
+  if(data->titleTime == 30)
+  {
+    data->titleTime = 0;
+    data->titleClr = (SDL_Color){
+      .r = rand(),
+      .g = rand(),
+      .b = rand(),
+      .a = 255,
+    };
+  }
 }
 
 void MenuScreenRender(CGL_Screen *screen, CGL_Context *ctx)
 {
   MenuScreenData *data = CGL_ScreenGetData(screen);
-  //(CGL_Context *ctx, CGL_Font *font, const char *str, int x, int y, int charW, int charH, int r, int g, int b);
-  CGL_DrawString(ctx, data->font, "HELLO WORLD!", 10, 10, 8, 8, 255, 0, 0);
+  
+  CGL_DrawString(ctx, data->font, "CROW ARCADE!", 4, 4, 18, 18, &(data->titleClr));
 }
 
 void MenuScreenDestroy(CGL_Screen *screen)

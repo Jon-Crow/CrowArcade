@@ -71,7 +71,7 @@ void CGL_DrawAnimation(CGL_Context *ctx, CGL_Animation *anim, int x, int y, int 
     CGL_DrawTextureRegion(ctx, frame, x, y, w, h);
 }
 
-void CGL_DrawString(CGL_Context *ctx, CGL_Font *font, const char *str, int x, int y, int charW, int charH, int r, int g, int b)
+void CGL_DrawString(CGL_Context *ctx, CGL_Font *font, const char *str, int x, int y, int charW, int charH, const SDL_Color *clr)
 {
   if(font == NULL)
     return;
@@ -86,7 +86,8 @@ void CGL_DrawString(CGL_Context *ctx, CGL_Font *font, const char *str, int x, in
 
   CGL_TextureRegion *reg = CGL_InitTextureRegion();
 
-  SDL_SetTextureColorMod(img, r, g, b);
+  if(clr != NULL)
+    SDL_SetTextureColorMod(img, clr->r, clr->g, clr->b);
 
   int len = strlen(str);
   for(int i = 0; i < len; i++)
@@ -95,7 +96,8 @@ void CGL_DrawString(CGL_Context *ctx, CGL_Font *font, const char *str, int x, in
     CGL_DrawTextureRegion(ctx, reg, x+i*charW, y, charW, charH);
   }
 
-  SDL_SetTextureColorMod(img, 255, 255, 255);
+  if(clr != NULL)
+    SDL_SetTextureColorMod(img, 255, 255, 255);
 
   CGL_DestroyTextureRegion(reg);
 }
