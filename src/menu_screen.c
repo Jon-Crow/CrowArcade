@@ -53,7 +53,7 @@ int MenuScreenInit(CGL_Screen *screen)
 
   CGL_Animation *leftFrogAnim = NULL;
   CGL_Animation *rightFrogAnim = NULL;
-  CGL_Texture *frogTx = ResourcesGetTexture(TEXTURE_FROGGER_GROG);
+  CGL_Texture *frogTx = ResourcesGetTexture(TEXTURE_FROGGER_FROG);
   CGL_SpriteSheet *frogSheet = CGL_CreateSpriteSheet(frogTx, 16, 16);
   if(frogSheet != NULL)
   {

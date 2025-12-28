@@ -28,7 +28,7 @@ bool InitResources(CGL_Context *ctx)
   res.tx[TEXTURE_SPLASH_SCREEN] = CGL_LoadTexture(rend, TEXTURE_SPLASH_SCREEN_PATH);
   res.tx[TEXTURE_PAC_MAN_FONT] = CGL_LoadTexture(rend, TEXTURE_PAC_MAN_FONT_PATH);
   res.tx[TEXTURE_PAC_MAN_GHOSTS] = CGL_LoadTexture(rend, TEXTURE_PAC_MAN_GHOSTS_PATH);
-  res.tx[TEXTURE_FROGGER_GROG] = CGL_LoadTexture(rend, TEXTURE_FROGGER_GROG_PATH);
+  res.tx[TEXTURE_FROGGER_FROG] = CGL_LoadTexture(rend, TEXTURE_FROGGER_FROG_PATH);
 
   for(int i = 0; i < TEXTURE_COUNT; i++)
   {
