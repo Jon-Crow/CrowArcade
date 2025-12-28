@@ -30,26 +30,9 @@ struct MenuScreenData {
 
 int MenuScreenInit(CGL_Screen *screen)
 {
-  CGL_Texture *fontTx = ResourcesGetTexture(TEXTURE_PAC_MAN_FONT);
-
-  CGL_SpriteSheet *fontSheet = CGL_CreateSpriteSheet(fontTx, 8, 8);
-  if(fontSheet == NULL)
-    return -1;
-
-  CGL_Font *font = CGL_CreateFont(fontSheet, "ABCDEFGHIJKLMNOPQRSTUVWXYZ!/-\"0123456789 ");
-  if(font == NULL)
-  {
-    CGL_DestroySpriteSheet(fontSheet);
-    return -1;
-  }
-
   MenuScreenData *data = (MenuScreenData*)malloc(sizeof(MenuScreenData));
   if(data == NULL)
-  {
-    CGL_DestroyFont(font);
-    CGL_DestroySpriteSheet(fontSheet);
     return -1;
-  }
 
   CGL_Animation *leftGhostAnim = NULL;
   CGL_Animation *rightGhostAnim = NULL;
@@ -85,7 +68,7 @@ int MenuScreenInit(CGL_Screen *screen)
     CGL_DestroySpriteSheet(frogSheet);
   }
 
-  data->font = font;
+  data->font = ResourcesGetFont(FONT_PAC_MAN);
   data->titleClr = (SDL_Color){
     .r = 255,
     .g = 0,
@@ -192,6 +175,5 @@ void MenuScreenDestroy(CGL_Screen *screen)
       CGL_DestroyAnimation(opt.rightAnim);
   }
 
-  CGL_DestroyFont(data->font);
   free(data);
 }
