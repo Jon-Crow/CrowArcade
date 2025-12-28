@@ -1,3 +1,50 @@
+/**
+*@file main.c
+*
+*@author Jonathan Crow
+*@date 2025
+*/
+
+/**
+*@mainpage Crow Arcade - A low level C application to emulate a Ms. Pac-Man arcade cabinet
+*
+*This application implements many recreations of old arcade games to be run on a 1980s Ms. Pac-Man
+*arcade cabinet. It is designed to be run on a Raspberry Pi connected to a generic computer monitor 
+*that is mounted in place of the cabiner's CRT monitor. It includes a graphics library called CGL
+*(Crow Graphics Library) that serves as an abstraction layer for SDL.
+*
+*## Style
+*Each data type within the CGL library uses a locally defined struct with a forward declaration in
+*the corresponding header. This sacrifices some conveniece for strong encapsulation. It also forces
+*the user to allocate the types on the stack, and prevents them from allocating on the stack. While,
+*this is a minor drawback, the data encapsulation and memory management offered make for an easier
+*to use codebase.
+*
+*Each type includes global function with the format: CGL_[type name][function descripton]  
+*For example: CGL_TextureGetWidth  
+*The exceptions to this rule are init, create, and destroy functions.  
+*Those follow the following format: CGL_[Init/Create/Destroy][type name]  
+*I can't really say for certain why I made those exceptions, but... I did.  
+*
+*## Instructions
+*1. Clone the repository to your Raspberry Pi
+```bash
+git clone https://github.com/Jon-Crow/CrowArcade.git
+```
+*2. Within the root directory, use make to compile the project  
+*for debug build:
+```bash
+make compile
+```
+*for release build:
+```bash
+make compile
+```
+*3. Use make to run the application
+```bash
+make run
+```
+*/
 
 #include <stdbool.h>
 #include <unistd.h>

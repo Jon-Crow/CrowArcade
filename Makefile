@@ -18,6 +18,8 @@ LIBS = -lSDL2_image
 VALGRIND_OPTS = --leak-check=full --track-origins=yes --log-file=valgrind.log
 CPPCHECK_OPTS = --std=c11 --check-level=exhaustive --template="{file}:{line}: {severity}: {message}" --output-file=cppcheck.log
 
+.PHONY: docs
+
 all: clean compile
 
 clean:
