@@ -19,16 +19,28 @@ CGL_Animation* CGL_InitAnimation(size_t frameCount, int frameTime, bool loop)
 
   anim->frames = (CGL_TextureRegion**)malloc(frameCount * sizeof(CGL_TextureRegion*));
   if(anim->frames == NULL)
+  {
+    CGL_DestroyAnimation(anim);
     return NULL;
+  }
+
+  for(size_t i = 0; i < frameCount; i++)
+    anim->frames[i] = NULL;
+
+  anim->frameCount = frameCount;
 
   for(size_t i = 0; i < frameCount; i++)
   {
     anim->frames[i] = CGL_InitTextureRegion();
     if(anim->frames[i] == NULL)
+    {
+      for(size_t x = 0; x < i; x++)
+        CGL_DestroyTextureRegion(anim->frames[x]);
+      CGL_DestroyAnimation(anim);
       return NULL;
+    }
   }
 
-  anim->frameCount = frameCount;
   anim->curFrame = 0;
   anim->frameTime = frameTime;
   anim->clock = 0;

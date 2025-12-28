@@ -16,7 +16,7 @@ endif
 LIBS = -lSDL2_image
 
 VALGRIND_OPTS = --leak-check=full --track-origins=yes --log-file=valgrind.log
-CPPCHECK_OPTS = --std=c11 --output-file=cppcheck.log
+CPPCHECK_OPTS = --std=c11 --check-level=exhaustive --template="{file}:{line}: {severity}: {message}" --output-file=cppcheck.log
 
 all: clean compile
 
@@ -45,4 +45,4 @@ cppcheck:
 	cppcheck $(CPPCHECK_OPTS) $(SRC_DIR)
 
 clang_tidy:
-	clang-tidy $(SRC_DIR)/*.c -- -std=c11 -Wall -Wextra `sdl2-config --cflags`
+	clang-tidy $(SRC_DIR)/*.c $(CGL_DIR)/*.c -- -std=c11 -Wall -Wextra `sdl2-config --cflags`
