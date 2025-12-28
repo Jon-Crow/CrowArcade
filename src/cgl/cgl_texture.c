@@ -200,13 +200,6 @@ void CGL_DestroyTexture(CGL_Texture *tx)
   free(tx);
 }
 
-void CGL_DeepDestroyTexture(CGL_Texture *tx)
-{
-  if(tx->img != NULL)
-    SDL_DestroyTexture(tx->img);
-  CGL_DestroyTexture(tx);
-}
-
 void CGL_DestroyTextureRegion(CGL_TextureRegion *reg)
 {
   free(reg);

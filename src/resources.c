@@ -37,6 +37,14 @@ CGL_Texture* ResourcesGetTexture(size_t idx)
 void DestroyResources()
 {
   for(int i = 0; i < TEXTURE_COUNT; i++)
-    CGL_DeepDestroyTexture(res.tx[i]);
+  {
+    if(res.tx[i] != NULL)
+    {
+      SDL_Texture *img = CGL_TextureGetImage(res.tx[i]);
+      if(img != NULL)
+        SDL_DestroyTexture(img);
+      CGL_DestroyTexture(res.tx[i]);
+    }
+  }
 }
 

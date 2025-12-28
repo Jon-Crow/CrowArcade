@@ -34,16 +34,12 @@ int MenuScreenInit(CGL_Screen *screen)
 
   CGL_SpriteSheet *fontSheet = CGL_CreateSpriteSheet(fontTx, 8, 8);
   if(fontSheet == NULL)
-  {
-    CGL_DeepDestroyTexture(fontTx);
     return -1;
-  }
 
   CGL_Font *font = CGL_CreateFont(fontSheet, "ABCDEFGHIJKLMNOPQRSTUVWXYZ!/-\"0123456789 ");
   if(font == NULL)
   {
     CGL_DestroySpriteSheet(fontSheet);
-    CGL_DeepDestroyTexture(fontTx);
     return -1;
   }
 
@@ -52,7 +48,6 @@ int MenuScreenInit(CGL_Screen *screen)
   {
     CGL_DestroyFont(font);
     CGL_DestroySpriteSheet(fontSheet);
-    CGL_DeepDestroyTexture(fontTx);
     return -1;
   }
 
@@ -191,28 +186,10 @@ void MenuScreenDestroy(CGL_Screen *screen)
     if(opt.screen != NULL)
       CGL_DestroyScreen(opt.screen);
 
-    CGL_Texture *leftTx;
     if(opt.leftAnim != NULL)
-    {
-      CGL_TextureRegion *reg = CGL_AnimationGetFrame(opt.leftAnim, 0);
-      if(reg != NULL)
-      {
-        leftTx = CGL_TextureRegionGetTexture(reg);
-        CGL_DeepDestroyTexture(leftTx);
-      }
       CGL_DestroyAnimation(opt.leftAnim);
-    }
     if(opt.rightAnim != NULL && opt.rightAnim != opt.leftAnim)
-    {
-      CGL_TextureRegion *reg = CGL_AnimationGetFrame(opt.rightAnim, 0);
-      if(reg != NULL)
-      {
-        CGL_Texture *tx = CGL_TextureRegionGetTexture(reg);
-        if(tx != leftTx)
-          CGL_DeepDestroyTexture(tx);
-      }
       CGL_DestroyAnimation(opt.rightAnim);
-    }
   }
 
   CGL_DestroyFont(data->font);
