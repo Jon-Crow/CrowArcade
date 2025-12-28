@@ -202,7 +202,8 @@ void CGL_DestroyTexture(CGL_Texture *tx)
 
 void CGL_DeepDestroyTexture(CGL_Texture *tx)
 {
-  SDL_DestroyTexture(tx->img);
+  if(tx->img != NULL)
+    SDL_DestroyTexture(tx->img);
   CGL_DestroyTexture(tx);
 }
 

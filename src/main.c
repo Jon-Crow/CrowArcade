@@ -4,6 +4,7 @@
 
 #include "cgl/cgl.h"
 
+#include "resources.h"
 #include "splash_screen.h"
 
 int main(void)
@@ -39,6 +40,14 @@ int main(void)
   rend = CGL_ContextGetRenderer(ctx);
   gameTx = CGL_ContextGetGameTexture(ctx);
   CGL_ContextGetScreenSize(ctx, &screenW, &screenH);
+
+  printf("Initializing resources... ");
+  if(!InitResources(ctx))
+  {
+    printf("failed: %s\n", SDL_GetError());
+    return -1;
+  }
+  printf("done.\n");
 
   printf("Creating splash screen... ");
   screen = CGL_CreateScreen(SplashScreenInit,
@@ -164,6 +173,7 @@ int main(void)
   }
 
   printf("Exiting\n");
+  DestroyResources();
   CGL_DestroyContext(ctx);
   SDL_Quit();
 

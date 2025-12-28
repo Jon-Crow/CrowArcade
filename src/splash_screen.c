@@ -1,5 +1,6 @@
 #include "splash_screen.h"
 
+#include "resources.h"
 #include "menu_screen.h"
 
 typedef struct SplashScreenData SplashScreenData;
@@ -11,9 +12,7 @@ struct SplashScreenData {
 
 int SplashScreenInit(CGL_Screen *screen)
 {
-  CGL_Texture *tx = CGL_LoadTexture(CGL_ScreenGetRenderer(screen), "../res/texture/stay_storm.png");
-  if(tx == NULL)
-    return -1;
+  CGL_Texture *tx = ResourcesGetTexture(TEXTURE_SPLASH_SCREEN);
 
   CGL_SpriteSheet *sheet = CGL_CreateSpriteSheet(tx, 224, 288);
   if(sheet == NULL)
@@ -88,11 +87,7 @@ void SplashScreenDestroy(CGL_Screen *screen)
     {
       CGL_Texture *tx = CGL_TextureRegionGetTexture(frame);
       if(tx != NULL)
-      {
-        SDL_Texture *img = CGL_TextureGetImage(tx);
-        if(img != NULL)
-          SDL_DeepDestroyTexture(img);
-      }
+        CGL_DeepDestroyTexture(tx);
     }
     CGL_DestroyAnimation(data->splash);
   }

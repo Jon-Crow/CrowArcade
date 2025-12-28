@@ -3,6 +3,8 @@
 
 #include <stdlib.h>
 
+#include "resources.h"
+
 #define GAME_OPTION_COUNT (2)
 #define GAME_OPTION_PAC_MAN (0)
 #define GAME_OPTION_FROGGER (1)
@@ -28,9 +30,7 @@ struct MenuScreenData {
 
 int MenuScreenInit(CGL_Screen *screen)
 {
-  CGL_Texture *fontTx = CGL_LoadTexture(CGL_ScreenGetRenderer(screen), "../res/texture/pac_font.png");
-  if(fontTx == NULL)
-    return -1;
+  CGL_Texture *fontTx = ResourcesGetTexture(TEXTURE_PAC_MAN_FONT);
 
   CGL_SpriteSheet *fontSheet = CGL_CreateSpriteSheet(fontTx, 8, 8);
   if(fontSheet == NULL)
@@ -58,42 +58,36 @@ int MenuScreenInit(CGL_Screen *screen)
 
   CGL_Animation *leftGhostAnim = NULL;
   CGL_Animation *rightGhostAnim = NULL;
-  CGL_Texture *ghostTx = CGL_LoadTexture(CGL_ScreenGetRenderer(screen), "../res/texture/pac_ghosts.png");
-  if(ghostTx != NULL)
+  CGL_Texture *ghostTx = ResourcesGetTexture(TEXTURE_PAC_MAN_GHOSTS);
+  CGL_SpriteSheet *ghostSheet = CGL_CreateSpriteSheet(ghostTx, 16, 16);
+  if(ghostSheet != NULL)
   {
-    CGL_SpriteSheet *ghostSheet = CGL_CreateSpriteSheet(ghostTx, 16, 16);
-    if(ghostSheet != NULL)
-    {
-      leftGhostAnim = CGL_InitAnimation(2, 10, true);
-      CGL_SpriteSheetGetSpriteAt(ghostSheet, 0, 0, CGL_AnimationGetFrame(leftGhostAnim, 0));
-      CGL_SpriteSheetGetSpriteAt(ghostSheet, 1, 0, CGL_AnimationGetFrame(leftGhostAnim, 1));
+    leftGhostAnim = CGL_InitAnimation(2, 10, true);
+    CGL_SpriteSheetGetSpriteAt(ghostSheet, 0, 0, CGL_AnimationGetFrame(leftGhostAnim, 0));
+    CGL_SpriteSheetGetSpriteAt(ghostSheet, 1, 0, CGL_AnimationGetFrame(leftGhostAnim, 1));
 
-      rightGhostAnim = CGL_InitAnimation(2, 10, true);
-      CGL_SpriteSheetGetSpriteAt(ghostSheet, 2, 1, CGL_AnimationGetFrame(rightGhostAnim, 0));
-      CGL_SpriteSheetGetSpriteAt(ghostSheet, 3, 1, CGL_AnimationGetFrame(rightGhostAnim, 1));
+    rightGhostAnim = CGL_InitAnimation(2, 10, true);
+    CGL_SpriteSheetGetSpriteAt(ghostSheet, 2, 1, CGL_AnimationGetFrame(rightGhostAnim, 0));
+    CGL_SpriteSheetGetSpriteAt(ghostSheet, 3, 1, CGL_AnimationGetFrame(rightGhostAnim, 1));
 
-      CGL_DestroySpriteSheet(ghostSheet);
-    }
+    CGL_DestroySpriteSheet(ghostSheet);
   }
 
   CGL_Animation *leftFrogAnim = NULL;
   CGL_Animation *rightFrogAnim = NULL;
-  CGL_Texture *frogTx = CGL_LoadTexture(CGL_ScreenGetRenderer(screen), "../res/texture/frog.png");
-  if(frogTx != NULL)
+  CGL_Texture *frogTx = ResourcesGetTexture(TEXTURE_FROGGER_GROG);
+  CGL_SpriteSheet *frogSheet = CGL_CreateSpriteSheet(frogTx, 16, 16);
+  if(frogSheet != NULL)
   {
-    CGL_SpriteSheet *frogSheet = CGL_CreateSpriteSheet(frogTx, 16, 16);
-    if(frogSheet != NULL)
-    {
-      leftFrogAnim = CGL_InitAnimation(2, 10, true);
-      CGL_SpriteSheetGetSpriteAt(frogSheet, 2, 1, CGL_AnimationGetFrame(leftFrogAnim, 0));
-      CGL_SpriteSheetGetSpriteAt(frogSheet, 3, 1, CGL_AnimationGetFrame(leftFrogAnim, 1));
+    leftFrogAnim = CGL_InitAnimation(2, 10, true);
+    CGL_SpriteSheetGetSpriteAt(frogSheet, 2, 1, CGL_AnimationGetFrame(leftFrogAnim, 0));
+    CGL_SpriteSheetGetSpriteAt(frogSheet, 3, 1, CGL_AnimationGetFrame(leftFrogAnim, 1));
 
-      rightFrogAnim = CGL_InitAnimation(2, 10, true);
-      CGL_SpriteSheetGetSpriteAt(frogSheet, 2, 0, CGL_AnimationGetFrame(rightFrogAnim, 0));
-      CGL_SpriteSheetGetSpriteAt(frogSheet, 3, 0, CGL_AnimationGetFrame(rightFrogAnim, 1));
+    rightFrogAnim = CGL_InitAnimation(2, 10, true);
+    CGL_SpriteSheetGetSpriteAt(frogSheet, 2, 0, CGL_AnimationGetFrame(rightFrogAnim, 0));
+    CGL_SpriteSheetGetSpriteAt(frogSheet, 3, 0, CGL_AnimationGetFrame(rightFrogAnim, 1));
 
-      CGL_DestroySpriteSheet(frogSheet);
-    }
+    CGL_DestroySpriteSheet(frogSheet);
   }
 
   data->font = font;
