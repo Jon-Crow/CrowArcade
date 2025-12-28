@@ -91,7 +91,7 @@ void SplashScreenDestroy(CGL_Screen *screen)
       {
         SDL_Texture *img = CGL_TextureGetImage(tx);
         if(img != NULL)
-          SDL_DestroyTexture(img);
+          SDL_DeepDestroyTexture(img);
       }
     }
     CGL_DestroyAnimation(data->splash);

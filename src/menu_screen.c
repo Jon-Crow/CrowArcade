@@ -204,7 +204,6 @@ void MenuScreenDestroy(CGL_Screen *screen)
       if(reg != NULL)
       {
         leftTx = CGL_TextureRegionGetTexture(reg);
-        CGL_DestroyTextureRegion(reg);
         CGL_DeepDestroyTexture(leftTx);
       }
       CGL_DestroyAnimation(opt.leftAnim);
@@ -215,10 +214,7 @@ void MenuScreenDestroy(CGL_Screen *screen)
       if(reg != NULL)
       {
         CGL_Texture *tx = CGL_TextureRegionGetTexture(reg);
-        CGL_DestroyTextureRegion(reg);
-        if(tx == leftTx)
-          CGL_DestroyTexture(tx);
-        else
+        if(tx != leftTx)
           CGL_DeepDestroyTexture(tx);
       }
       CGL_DestroyAnimation(opt.rightAnim);
