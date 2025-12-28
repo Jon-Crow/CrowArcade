@@ -8,14 +8,17 @@
 
 #include "cgl_animation.h"
 
+/**
+*@brief Holds frames and settings for an animation
+*/
 struct CGL_Animation {
-  CGL_TextureRegion **frames;
-  size_t frameCount;
-  size_t curFrame;
-  int frameTime;
-  int clock;
-  bool loop;
-  bool done;
+  CGL_TextureRegion **frames; /**< Array of texture region pointers, each representing a frame */
+  size_t frameCount;          /**< Number of frames */
+  size_t curFrame;            /**< The index of the current frame in the animation state */
+  int frameTime;              /**< Amount of time (in game frames) to remain on each frame */
+  int clock;                  /**< Timer that tracks when to advance to the next frame */
+  bool loop;                  /**< Wether or not the anumation repeats (if false, the animation will remain on the last frame) */
+  bool done;                  /**< Indicates if the animation has finished (will only ever be set if looping is disabled) */
 };
 
 CGL_Animation* CGL_InitAnimation(size_t frameCount, int frameTime, bool loop)
