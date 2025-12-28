@@ -81,6 +81,9 @@ int main(void)
   }
   printf("done.\n");
 
+  const uint32_t fps = 60;
+  const uint32_t frameDelay = (int)(1000.0f/fps + 0.5f);
+
   SDL_Rect gameTxDst = {
     .w = screenH, 
     .h = screenW, 
@@ -88,8 +91,11 @@ int main(void)
     .y = (screenH - screenW) / 2
   };
   bool run = true;
+
   while(run)
   {
+    uint32_t frameStart = SDL_GetTicks();
+
     while(SDL_PollEvent(&evt))
     {
       if(evt.type == SDL_KEYDOWN)
@@ -169,7 +175,9 @@ int main(void)
 
     CGL_ContextUpdateInput(ctx);
 
-    SDL_Delay(16);
+    uint32_t frameTime = SDL_GetTicks() - frameStart;
+    if(frameTime < frameDelay)
+      SDL_Delay(frameDelay - frameTime);
   }
 
   printf("Exiting\n");
