@@ -9,14 +9,31 @@
 
 #include "cgl_screen.h"
 
+/**
+*@brief Structure to function pointers specific to each screen
+*/
 struct CGL_Screen {
-  CGL_InitScreenFunc init;
-  CGL_UpdateScreenFunc update;
-  CGL_RenderScreenFunc render;
-  CGL_DestroyScreenFunc destroy;
+  CGL_InitScreenFunc init;       /**< Init function pointer */
+  CGL_UpdateScreenFunc update;   /**< Update function pointer */
+  CGL_RenderScreenFunc render;   /**< Render function pointer */
+  CGL_DestroyScreenFunc destroy; /**< Destroy function pointer */
   SDL_Renderer *rend;
   void *data;
 };
+
+/**
+*@var CGL_Screen::rend
+*Pointer to the global SDL renderer
+*
+*@todo This should probably be removed. No need to have it since I added it to CGL_Context
+*/
+
+/**
+*@var CGL_Screen::data
+*Generic pointer to be maintained by each screen implementation
+*
+*@warning The screen implementation is responsible for allocating and freeing this memory
+*/
 
 CGL_Screen* CGL_CreateScreen(CGL_InitScreenFunc init, 
                              CGL_UpdateScreenFunc update, 
