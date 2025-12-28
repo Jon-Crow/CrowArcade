@@ -12,7 +12,7 @@
 *@brief Holds frames and settings for an animation
 */
 struct CGL_Animation {
-  CGL_TextureRegion **frames; /**< Array of texture region pointers, each representing a frame */
+  CGL_TextureRegion **frames;
   size_t frameCount;          /**< Number of frames */
   size_t curFrame;            /**< The index of the current frame in the animation state */
   int frameTime;              /**< Amount of time (in game frames) to remain on each frame */
@@ -20,6 +20,13 @@ struct CGL_Animation {
   bool loop;                  /**< Wether or not the anumation repeats (if false, the animation will remain on the last frame) */
   bool done;                  /**< Indicates if the animation has finished (will only ever be set if looping is disabled) */
 };
+
+/**
+*@var CGL_Animation::frames
+*Array of texture region pointers, each representing a frame
+*
+*@note These pointers are created and freed by the animation.
+*/
 
 CGL_Animation* CGL_InitAnimation(size_t frameCount, int frameTime, bool loop)
 {

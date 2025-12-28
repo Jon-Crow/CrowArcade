@@ -10,19 +10,32 @@
 
 #include <string.h>
 
-#define CGL_GLYPH_COUNT (128)
+#define CGL_GLYPH_COUNT (128) /**< Maximum necessary size for an array of all possible characters */
 
 typedef struct CGL_Glyph CGL_Glyph;
 
+/**
+*@brief Simple coordinate struct to represent the position of a character in a spritesheet
+*/
 struct CGL_Glyph {
   int x;
   int y;
 };
 
+/**
+*@brief A container for a spritesheet of characters, and where each character is located
+*/
 struct CGL_Font {
-  CGL_SpriteSheet *sheet;
+  CGL_SpriteSheet *sheet;            /**< Pointer to the spritesheet to be referenced */
   CGL_Glyph glyphs[CGL_GLYPH_COUNT];
 };
+
+/**
+*@var CGL_Font::glyphs
+*Array of character locations within the spritesheet
+*
+*@note This array is indexed by the character to be located
+*/
 
 CGL_Font* CGL_CreateFont(CGL_SpriteSheet *sheet, const char *chars)
 {
