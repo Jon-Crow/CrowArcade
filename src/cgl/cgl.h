@@ -1,3 +1,10 @@
+/**
+*@file cgl.h
+*@brief Umbrella header for entire CGL library
+*
+*@author Jonathan Crow
+*@date 2025
+*/
 
 #ifndef CGL_H
 #define CGL_H

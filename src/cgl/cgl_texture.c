@@ -1,3 +1,12 @@
+/**
+*@file cgl_texture.c
+*@brief Definition of a structure that stores an SDL texture and its size
+*
+*@note This probably wasn't a necessary distinction, but may be useful in the future
+*
+*@author Jonathan Crow
+*@date 2025
+*/
 
 #include "cgl_texture.h"
 

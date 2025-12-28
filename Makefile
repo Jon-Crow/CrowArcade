@@ -46,3 +46,6 @@ cppcheck:
 
 clang_tidy:
 	clang-tidy $(SRC_DIR)/*.c $(CGL_DIR)/*.c -- -std=c11 -Wall -Wextra `sdl2-config --cflags`
+
+docs:
+	doxygen Doxyfile

@@ -1,3 +1,10 @@
+/**
+*@file cgl_font.c
+*@brief Definition of structure that interprets a spritesheet as a font
+*
+*@author Jonathan Crow
+*@date 2025
+*/
 
 #include "cgl_font.h"
 

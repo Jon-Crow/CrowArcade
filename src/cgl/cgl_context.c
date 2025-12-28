@@ -1,3 +1,10 @@
+/**
+*@file cgl_context.c
+*@brief Definition of structure that contains SDL globals needed throughout the application
+*
+*@author Jonathan Crow
+*@date 2025
+*/
 
 #include "cgl_context.h"
 

@@ -1,3 +1,10 @@
+/**
+*@file cgl_animation.c
+*@brief Implements a structure for controlling animations
+*
+*@author Jonathan Crow
+*@date 2025
+*/
 
 #include "cgl_animation.h"
 

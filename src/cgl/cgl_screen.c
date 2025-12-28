@@ -1,3 +1,11 @@
+/**
+*@file cgl_screen.c
+*@brief Definition of a structure that represents a game "scene"
+*
+*
+*@author Jonathan Crow
+*@date 2025
+*/
 
 #include "cgl_screen.h"
 

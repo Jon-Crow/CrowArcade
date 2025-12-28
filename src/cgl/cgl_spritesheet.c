@@ -1,3 +1,10 @@
+/**
+*@file cgl_spritesheet.c
+*@brief Definition of a structure that can interpret a texture as a grid and provide each cell as a texture region.
+*
+*@author Jonathan Crow
+*@date 2025
+*/
 
 #include "cgl_spritesheet.h"
 

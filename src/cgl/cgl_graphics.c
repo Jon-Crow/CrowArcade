@@ -1,3 +1,10 @@
+/**
+*@file cgl_graphics.c
+*@brief A collection of rendering helper functions
+*
+*@author Jonathan Crow
+*@date 2025
+*/
 
 #include "cgl_graphics.h"
 
