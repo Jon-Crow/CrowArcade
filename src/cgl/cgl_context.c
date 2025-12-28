@@ -10,16 +10,28 @@
 
 #include "cgl_macros.h"
 
+/**
+*@brief Holds SDL globals necessary throughout the application
+*/
 struct CGL_Context {
-  SDL_Window *win;
-  SDL_Renderer *rend;
+  SDL_Window *win;                 /**< Handle to the SDL window */
+  SDL_Renderer *rend;              /**< Handle to the SDL renderer */
   SDL_Texture *gameTx;
-  CGL_Screen *screen;
-  int screenW;
-  int screenH;
-  bool input[CGL_INPUT_COUNT];
-  bool prevInput[CGL_INPUT_COUNT];
+  CGL_Screen *screen;              /**< Handle to the screen that is currently being updated/rendered */
+  int screenW;                     /**< Width of the SDL window */
+  int screenH;                     /**< Height of the SDL window */
+  bool input[CGL_INPUT_COUNT];     /**< Current state of each input */
+  bool prevInput[CGL_INPUT_COUNT]; /**< Previous frame's state of each input */
 };
+
+/**
+*@var CGL_Context::gameTx
+*This texture is what is actually drawn to. It is done this way so that, at the end of each frame,
+*any effects can be applied. For example, in the context of the arcade emulator, the frame is rotated
+*90 degrees and stretched to match the size of the monitor.
+*
+*@todo Make the size of this texture adjustable (duh)
+*/
 
 CGL_Context* CGL_CreateContext()
 {
