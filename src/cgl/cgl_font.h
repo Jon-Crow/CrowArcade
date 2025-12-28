@@ -17,6 +17,9 @@ typedef struct CGL_Font CGL_Font;
 /**
 *@brief Creates a new font
 *
+*@param sheet The sheet from which the font is to be made
+*@param chars A string that indicates each character (sequentially), starting at (0,0), that is illustrated by the provided spritesheet
+*
 *@return A pointer to a CGL_Font instance, or NULL if there was an error
 */
 CGL_Font* CGL_CreateFont(CGL_SpriteSheet *sheet, const char *chars);

@@ -87,6 +87,8 @@ int main(void)
   rend = CGL_ContextGetRenderer(ctx);
   gameTx = CGL_ContextGetGameTexture(ctx);
   CGL_ContextGetScreenSize(ctx, &screenW, &screenH);
+  
+  SDL_RenderSetIntegerScale(rend, SDL_TRUE);
 
   printf("Initializing resources... ");
   if(!InitResources(ctx))
