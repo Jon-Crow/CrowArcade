@@ -2,6 +2,8 @@
 #ifndef CGL_RESOURCES_H
 #define CGL_RESOURCES_H
 
+#include <stdbool.h>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
@@ -43,6 +45,7 @@ void CGL_TextureRegionGetRect(CGL_TextureRegion *reg, SDL_Rect *bounds);
 void CGL_TextureRegionSetRect(CGL_TextureRegion *reg, const SDL_Rect *bounds);
 
 void CGL_DestroyTexture(CGL_Texture *tx);
+void CGL_DeepDestroyTexture(CGL_Texture *tx);
 //NOTE: This does not destroy the texture!
 void CGL_DestroyTextureRegion(CGL_TextureRegion *reg);
 

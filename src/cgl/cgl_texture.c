@@ -197,8 +197,13 @@ void CGL_TextureRegionSetRect(CGL_TextureRegion *reg, const SDL_Rect *bounds)
 
 void CGL_DestroyTexture(CGL_Texture *tx)
 {
-  SDL_DestroyTexture(tx->img);
   free(tx);
+}
+
+void CGL_DeepDestroyTexture(CGL_Texture *tx)
+{
+  SDL_DestroyTexture(tx->img);
+  CGL_DestroyTexture(tx);
 }
 
 void CGL_DestroyTextureRegion(CGL_TextureRegion *reg)

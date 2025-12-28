@@ -18,7 +18,7 @@ int SplashScreenInit(CGL_Screen *screen)
   CGL_SpriteSheet *sheet = CGL_CreateSpriteSheet(tx, 224, 288);
   if(sheet == NULL)
   {
-    CGL_DestroyTexture(tx);
+    CGL_DeepDestroyTexture(tx);
     return -1;
   }
 
@@ -26,7 +26,7 @@ int SplashScreenInit(CGL_Screen *screen)
   if(splash == NULL)
   {
     CGL_DestroySpriteSheet(sheet);
-    CGL_DestroyTexture(tx);
+    CGL_DeepDestroyTexture(tx);
     return -1;
   }
   
@@ -35,7 +35,7 @@ int SplashScreenInit(CGL_Screen *screen)
   {
     CGL_DestroyAnimation(splash);
     CGL_DestroySpriteSheet(sheet);
-    CGL_DestroyTexture(tx);
+    CGL_DeepDestroyTexture(tx);
     return -1;
   }
 

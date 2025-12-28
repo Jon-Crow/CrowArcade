@@ -11,7 +11,7 @@ struct CGL_Animation {
   bool done;
 };
 
-CGL_Animation* CGL_InitAnimation(size_t frameCount, int frameTime)
+CGL_Animation* CGL_InitAnimation(size_t frameCount, int frameTime, bool loop)
 {
   CGL_Animation* anim = (CGL_Animation*)malloc(sizeof(CGL_Animation));
   if(anim == NULL)
@@ -32,7 +32,7 @@ CGL_Animation* CGL_InitAnimation(size_t frameCount, int frameTime)
   anim->curFrame = 0;
   anim->frameTime = frameTime;
   anim->clock = 0;
-  anim->loop = false;
+  anim->loop = loop;
   anim->done = false;
 
   return anim;
@@ -44,7 +44,7 @@ CGL_Animation* CGL_AnimationFromRows(CGL_SpriteSheet* sheet, int startRow, int e
   size_t frameCount = cols * (endRow - startRow);
   printf("Creating animation. Sheet has %d columns.\nFrame count: %zu\n", cols, frameCount);
   
-  CGL_Animation *anim = CGL_InitAnimation(frameCount, frameTime);
+  CGL_Animation *anim = CGL_InitAnimation(frameCount, frameTime, loop);
   if(anim == NULL)
     return NULL;
 
@@ -58,9 +58,17 @@ CGL_Animation* CGL_AnimationFromRows(CGL_SpriteSheet* sheet, int startRow, int e
     }
   }
 
-  anim->loop = loop;
-
   return anim;
+}
+
+bool CGL_AnimationIsLooping(CGL_Animation *anim)
+{
+  return anim->loop;
+}
+
+void CGL_AnimationSetLooping(CGL_Animation *anim, bool loop)
+{
+  anim->loop = loop;
 }
 
 CGL_TextureRegion* CGL_AnimationGetFrame(CGL_Animation *anim, size_t frame)
