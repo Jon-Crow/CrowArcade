@@ -14,6 +14,9 @@
 #include "cgl_animation.h"
 #include "cgl_font.h"
 
+void CGL_GraphicsDrawFilledRect(CGL_Context *ctx, int x, int y, int w, int h, const SDL_Color *clr);
+void CGL_GraphicsDrawFilledCircle(CGL_Context *ctx, int x, int y, int r, const SDL_Color *clr);
+
 /**
 *@brief Helper function to handle SDL calls necessary for drawing a texture
 *

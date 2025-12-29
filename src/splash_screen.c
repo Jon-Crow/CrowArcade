@@ -13,7 +13,7 @@ struct SplashScreenData {
 int SplashScreenInit(CGL_Screen *screen)
 {
   CGL_SpriteSheet *sheet = ResourcesGetSpriteSheet(SPRITE_SHEET_SPLASH_SCREEN);
-  CGL_Animation *splash = CGL_AnimationFromRows(sheet, 0, 2, 7, false);
+  CGL_Animation *splash = CGL_AnimationFromRows(sheet, 0, 2, 1, false); //FIX ME: Frame time should be 7
   if(splash == NULL)
     return -1;
   

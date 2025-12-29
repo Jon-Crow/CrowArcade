@@ -5,6 +5,7 @@
 
 #include "resources.h"
 #include "pac_man/pac_man.h"
+#include "pac_man/pac_level.h"
 
 #define GAME_OPTION_COUNT (2)
 #define GAME_OPTION_PAC_MAN (0)
@@ -57,7 +58,18 @@ int MenuScreenInit(CGL_Screen *screen)
                                               PacManScreenDestroy,
                                               rend);
   if(pacManScreen != NULL)
+  {
     CGL_ScreenInit(pacManScreen);
+    //FIX ME: Move this to level select screen eventually
+    PacManLevel *lvl = LoadPacManLevel("res/json/pac_man/level0.json");
+    if(lvl != NULL)
+    {
+      printf("Successfully parsed level json.\n");
+      PacManScreenSetLevel(pacManScreen, lvl);
+    }
+    else
+      printf("Failed to parse level json!\n");
+  }
   else
     printf("ERROR: Failed to create Pac-Man screen!\n");
 
@@ -116,7 +128,16 @@ void MenuScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
     };
   }
 
-  if(CGL_ContextInputJustSet(ctx, CGL_INPUT_DOWN))
+  GameOption opt = data->opts[data->optIdx];
+
+  if(CGL_ContextInputJustSet(ctx, CGL_INPUT_P1_START))
+  {
+    if(opt.screen != NULL)
+      CGL_ContextSetScreen(ctx, opt.screen);
+    else
+      printf("ERROR: Can't start game, because its screen is NULL!\n");
+  }
+  else if(CGL_ContextInputJustSet(ctx, CGL_INPUT_DOWN))
   {
     data->optIdx++;
     if(data->optIdx >= GAME_OPTION_COUNT)
@@ -129,7 +150,6 @@ void MenuScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
       data->optIdx = GAME_OPTION_COUNT-1;
   }
 
-  GameOption opt = data->opts[data->optIdx];
   if(opt.leftAnim != NULL)
     CGL_AnimationUpdate(opt.leftAnim);
   if(opt.rightAnim != NULL)

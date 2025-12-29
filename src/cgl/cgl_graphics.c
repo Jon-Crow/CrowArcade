@@ -12,6 +12,39 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL2_gfxPrimitives.h>
+
+void CGL_GraphicsDrawFilledRect(CGL_Context *ctx, int x, int y, int w, int h, const SDL_Color *clr)
+{
+  SDL_Renderer *rend = CGL_ContextGetRenderer(ctx);
+  if(rend == NULL)
+    return;
+
+  SDL_Rect rect = {
+    .x = x,
+    .y = y,
+    .w = w,
+    .h = h
+  };
+
+  if(clr != NULL)
+    SDL_SetRenderDrawColor(rend, clr->r, clr->g, clr->b, clr->a);
+
+  SDL_RenderFillRect(rend, &rect);
+}
+
+void CGL_GraphicsDrawFilledCircle(CGL_Context *ctx, int x, int y, int r, const SDL_Color *clr)
+{
+  SDL_Renderer *rend = CGL_ContextGetRenderer(ctx);
+  if(rend == NULL)
+    return;
+
+  int clrInt = (clr->a << 24) |
+               (clr->b << 16) |
+               (clr->g <<  8) |
+               clr->r;
+  filledCircleColor(rend, x, y, r, clrInt);
+}
 
 void CGL_DrawTexture(CGL_Context *ctx, CGL_Texture *tx, int x, int y, int w, int h)
 {

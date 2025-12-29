@@ -18,7 +18,7 @@ else
 endif
 
 INCLUDE_DIRS = -I$(CJSON_DIR)
-LIBS = -lSDL2_image
+LIBS = -lSDL2_image -lSDL2_gfx
 
 VALGRIND_OPTS = --leak-check=full --track-origins=yes --log-file=valgrind.log
 CPPCHECK_OPTS = --std=c11 --check-level=exhaustive --template="{file}:{line}: {severity}: {message}" --output-file=cppcheck.log
@@ -28,7 +28,7 @@ CPPCHECK_OPTS = --std=c11 --check-level=exhaustive --template="{file}:{line}: {s
 all: clean compile
 
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR) docs *.log
 
 compile:
 	mkdir -p $(BUILD_DIR)
@@ -52,7 +52,7 @@ cppcheck:
 	cppcheck $(CPPCHECK_OPTS) $(SRC_DIR)
 
 clang_tidy:
-	clang-tidy $(ALL_C_FILES) -- -std=c11 -Wall -Wextra `sdl2-config --cflags`
+	clang-tidy $(ALL_C_FILES) -- $(INCLUDE_DIRS) -std=c11 -Wall -Wextra `sdl2-config --cflags`
 
 docs:
 	doxygen Doxyfile
