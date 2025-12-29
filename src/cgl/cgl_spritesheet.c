@@ -8,12 +8,15 @@
 
 #include "cgl_spritesheet.h"
 
+/**
+*@brief Structure that references a texture and can divide it into a grid
+*/
 struct CGL_SpriteSheet {
-  CGL_Texture *tx;
-  int spriteW;
-  int spriteH;
-  int rows;
-  int cols;
+  CGL_Texture *tx; /**< Texture to be divided into a grid */
+  int spriteW;     /**< Width of each sprite */
+  int spriteH;     /**< Height of each sprite */
+  int rows;        /**< Number of rows, based on the texture's height and the given sprite height */
+  int cols;        /**< Number of columns, based on the texture's width and the given sprite width */
 };
 
 CGL_SpriteSheet* CGL_CreateSpriteSheet(CGL_Texture *tx, int spriteW, int spriteH)

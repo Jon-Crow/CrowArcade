@@ -100,7 +100,7 @@ void MenuScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
   MenuScreenData *data = CGL_ScreenGetData(screen);
 
   data->titleTime++;
-  if(data->titleTime == 30)
+  if(data->titleTime == 15)
   {
     data->titleTime = 0;
     data->titleClr = (SDL_Color){

@@ -1,9 +1,10 @@
 
-SRC_DIR   = ./src
-CGL_DIR   = ./src/cgl
-BUILD_DIR = ./build
+SRC_DIR     = ./src
+CGL_DIR     = ./src/cgl
+PAC_MAN_DIR = ./src/pac_man
+BUILD_DIR   = ./build
 
-EXECUTABLE = sdl_test
+EXECUTABLE = crow_arcade
 
 BUILD_TYPE ?= debug
 
@@ -30,6 +31,7 @@ compile:
 	gcc $(GCC_OPTS) \
 			$(CGL_DIR)/*.c \
 	    $(SRC_DIR)/*.c \
+			$(PAC_MAN_DIR)/*.c \
 			-o $(BUILD_DIR)/$(EXECUTABLE) \
 			`sdl2-config --cflags --libs` \
 			$(LIBS)
@@ -47,7 +49,7 @@ cppcheck:
 	cppcheck $(CPPCHECK_OPTS) $(SRC_DIR)
 
 clang_tidy:
-	clang-tidy $(SRC_DIR)/*.c $(CGL_DIR)/*.c -- -std=c11 -Wall -Wextra `sdl2-config --cflags`
+	clang-tidy $(SRC_DIR)/*.c $(CGL_DIR)/*.c $(PAC_MAN_DIR)/*.c -- -std=c11 -Wall -Wextra `sdl2-config --cflags`
 
 docs:
 	doxygen Doxyfile

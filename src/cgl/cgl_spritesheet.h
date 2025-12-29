@@ -15,6 +15,11 @@
 
 typedef struct CGL_SpriteSheet CGL_SpriteSheet;
 
+/**
+*@brief Creates a new spritesheet
+*
+*@return A pointer to a CGL_SpriteSheet instance, or NULL if there was an error
+*/
 CGL_SpriteSheet* CGL_CreateSpriteSheet(CGL_Texture *tx, int spriteW, int spriteH);
 
 CGL_Texture* CGL_SpriteSheetGetTexture(CGL_SpriteSheet *sheet);
