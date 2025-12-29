@@ -10,9 +10,14 @@
 #define PAC_MAN_MAZE_HEIGHT (31)
 #define PAC_MAN_MAZE_SIZE   (868)
 
-#define PAC_MAN_JSON_KEY_TX_COL ("tx_col")
-#define PAC_MAN_JSON_KEY_TX_ROW ("tx_row")
-#define PAC_MAN_JSON_KEY_MAZE   ("maze")
+#define PAC_MAN_JSON_KEY_TX_COL      ("tx_col")
+#define PAC_MAN_JSON_KEY_TX_ROW      ("tx_row")
+#define PAC_MAN_JSON_KEY_DOT_COLOR   ("dot_color")
+#define PAC_MAN_JSON_KEY_DOT_COLOR_R ("r")
+#define PAC_MAN_JSON_KEY_DOT_COLOR_G ("g")
+#define PAC_MAN_JSON_KEY_DOT_COLOR_B ("b")
+#define PAC_MAN_JSON_KEY_DOT_COLOR_A ("a")
+#define PAC_MAN_JSON_KEY_MAZE        ("maze")
 
 typedef enum {
   EMPTY     = 0,
@@ -23,7 +28,7 @@ typedef enum {
 
 typedef struct PacManLevel PacManLevel;
 
-PacManLevel* CreatePacManLevel(int lvlCol, int lvlRow);
+PacManLevel* CreatePacManLevel(int lvlCol, int lvlRow, const SDL_Color *dotColor);
 
 PacManLevel* LoadPacManLevel(const char *jsonPath);
 

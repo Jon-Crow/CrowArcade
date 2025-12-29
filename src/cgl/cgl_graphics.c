@@ -39,9 +39,10 @@ void CGL_GraphicsDrawFilledCircle(CGL_Context *ctx, int x, int y, int r, const S
   if(rend == NULL)
     return;
 
-  SDL_PixelFormat *fmt = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
-  Uint32 clrInt = SDL_MapRGBA(fmt, clr->r, clr->g, clr->b, clr->a);
-  SDL_FreeFormat(fmt);
+  int clrInt = (clr->a << 24) |
+               (clr->b << 16) |
+               (clr->g <<  8) |
+               clr->r;
   filledCircleColor(rend, x, y, r, clrInt);
 }
 
