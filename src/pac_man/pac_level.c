@@ -8,6 +8,7 @@
 struct PacManLevel {
   CGL_TextureRegion* mazeTx;
   PacManMazeCellType maze[PAC_MAN_MAZE_SIZE];
+  int dotCount;
   SDL_Color dotColor;
   Vector2I spawn;
 };
@@ -39,6 +40,7 @@ PacManLevel* CreatePacManLevel(int lvlCol, int lvlRow, const SDL_Color *dotColor
 
   for(int i = 0; i < PAC_MAN_MAZE_SIZE; i++)
     level->maze[i] = EMPTY;
+  level->dotCount = 0;
 
   if(dotColor == NULL)
     level->dotColor = (SDL_Color){.r = 255, .g = 255, .b = 255, .a = 255};
@@ -99,8 +101,10 @@ bool PacManLevelParseDotColor(cJSON *lvlJson, SDL_Color *clr)
   return true;
 }
 
-bool PacManLevelParseMaze(cJSON *lvlJson, PacManMazeCellType *maze)
+bool PacManLevelParseMaze(cJSON *lvlJson, PacManMazeCellType *maze, int *dotCount)
 {
+  *dotCount = 0;
+
   cJSON *mazeJson = cJSON_GetObjectItemCaseSensitive(lvlJson, PAC_MAN_JSON_KEY_MAZE);
   if(cJSON_IsArray(mazeJson))
   {
@@ -113,7 +117,11 @@ bool PacManLevelParseMaze(cJSON *lvlJson, PacManMazeCellType *maze)
         if(cJSON_IsNumber(cell))
         {
           if(IsValidPacManMazeCellType(cell->valueint))
+          {
             maze[i] = cell->valueint;
+            if(maze[i] == DOT || maze[i] == SUPER_DOT)
+              (*dotCount)++;
+          }
           else
             return false;
         }
@@ -151,7 +159,8 @@ PacManLevel* LoadPacManLevel(const char *jsonPath)
     printf("ERROR: Level json key missing or invalid: %s\n", PAC_MAN_JSON_KEY_TX_ROW);
 
   PacManMazeCellType maze[PAC_MAN_MAZE_SIZE];
-  if(!PacManLevelParseMaze(json, maze))
+  int dotCount;
+  if(!PacManLevelParseMaze(json, maze, &dotCount))
   {
     printf("ERROR: Level json key missing or invalid: %s\n", PAC_MAN_JSON_KEY_MAZE);
     cJSON_Delete(json);
@@ -184,6 +193,7 @@ PacManLevel* LoadPacManLevel(const char *jsonPath)
 
   for(int i = 0; i < PAC_MAN_MAZE_SIZE; i++)
     lvl->maze[i] = maze[i];
+  lvl->dotCount = dotCount;
 
   return lvl;
 }
@@ -199,6 +209,26 @@ PacManMazeCellType PacManLevelGetCellAt(PacManLevel *level, int col, int row)
   if(idx < 0 || idx >= PAC_MAN_MAZE_SIZE)
     return WALL;
   return level->maze[idx];
+}
+
+void PacManLevelSetCellAt(PacManLevel *level, int col, int row, PacManMazeCellType cell)
+{
+  int idx = row*PAC_MAN_MAZE_WIDTH + col;
+  if(idx < 0 || idx >= PAC_MAN_MAZE_SIZE)
+    return;
+
+  PacManMazeCellType prev = level->maze[idx];
+  level->maze[idx] = cell;
+
+  if((prev == DOT || prev == SUPER_DOT) && !(cell == DOT || cell == SUPER_DOT))
+    level->dotCount--;
+  else if(!(prev == DOT || prev == SUPER_DOT) && (cell == DOT || cell == SUPER_DOT))
+    level->dotCount++;
+}
+
+int PacManLevelGetDotCount(PacManLevel *level)
+{
+  return level->dotCount;
 }
 
 void PacManLevelRender(CGL_Context *ctx, PacManLevel *lvl, int startX, int startY)

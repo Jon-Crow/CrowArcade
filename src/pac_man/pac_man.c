@@ -109,6 +109,9 @@ CGL_Animation* GetCharAnimation(const PacManChar *ch)
 
 bool IsWallNextToChar(PacManChar *ch, PacManDirection dir, PacManLevel *lvl)
 {
+  //This is probably overly convoluted, but it is meant to get the proper edge
+  //of the player's cell, depending on query and movement direction. Might
+  //break if the direction opposite of movement is checked
   int col = (ch->dir == LEFT || dir == LEFT) ? (ch->pos.x + 7)/8 : ch->pos.x/8;
   int row = (ch->dir == UP   || dir == UP  ) ? (ch->pos.y + 7)/8 : ch->pos.y/8;
 
@@ -212,6 +215,13 @@ void PacManScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
   if(data->state == PLAY)
   {
     UpdateChar(&(data->plyr.charData), data->lvl);
+
+    int col = (data->plyr.charData.pos.x + 4)/8;
+    int row = (data->plyr.charData.pos.y + 4)/8;
+    
+    PacManMazeCellType curCell = PacManLevelGetCellAt(data->lvl, col, row);
+    if(curCell == DOT || curCell == SUPER_DOT)
+      PacManLevelSetCellAt(data->lvl, col, row, EMPTY);
 
     if(CGL_ContextGetInput(ctx, CGL_INPUT_UP))
     {

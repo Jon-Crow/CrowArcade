@@ -36,6 +36,8 @@ PacManLevel* LoadPacManLevel(const char *jsonPath);
 
 void PacManLevelGetSpawn(PacManLevel *level, Vector2I *v);
 PacManMazeCellType PacManLevelGetCellAt(PacManLevel *level, int col, int row);
+void PacManLevelSetCellAt(PacManLevel *level, int col, int row, PacManMazeCellType cell);
+int PacManLevelGetDotCount(PacManLevel *level);
 
 void PacManLevelRender(CGL_Context *ctx, PacManLevel *lvl, int x, int y);
 
