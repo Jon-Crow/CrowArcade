@@ -175,6 +175,14 @@ int main(void)
           case SDLK_RIGHT:
             CGL_ContextSetInput(ctx, CGL_INPUT_RIGHT, true);
             break;
+
+          case SDLK_RETURN:
+            CGL_ContextSetInput(ctx, CGL_INPUT_P1_START, true);
+            break;
+
+          case SDLK_SPACE:
+            CGL_ContextSetInput(ctx, CGL_INPUT_P2_START, true);
+            break;
         }
       }
       else if(evt.type == SDL_KEYUP)
@@ -199,6 +207,14 @@ int main(void)
           case SDLK_d:
           case SDLK_RIGHT:
             CGL_ContextSetInput(ctx, CGL_INPUT_RIGHT, false);
+            break;
+          
+          case SDLK_RETURN:
+            CGL_ContextSetInput(ctx, CGL_INPUT_P1_START, false);
+            break;
+
+          case SDLK_SPACE:
+            CGL_ContextSetInput(ctx, CGL_INPUT_P2_START, false);
             break;
         }
       }

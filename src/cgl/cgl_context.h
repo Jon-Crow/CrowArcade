@@ -14,11 +14,16 @@
 #include "cgl_context.h"
 #include "cgl_screen.h"
 
-#define CGL_INPUT_COUNT (4) /**< Total number of inputs */
-#define CGL_INPUT_UP    (0) /**< Joystick up */
-#define CGL_INPUT_LEFT  (1) /**< Joystick left */
-#define CGL_INPUT_DOWN  (2) /**< Joystick down */
-#define CGL_INPUT_RIGHT (3) /**< Joystick right */
+/**
+*@todo CGL Context inputs should be configurable instead of static
+*/
+#define CGL_INPUT_COUNT    (6) /**< Total number of inputs */
+#define CGL_INPUT_UP       (0) /**< Joystick up */
+#define CGL_INPUT_LEFT     (1) /**< Joystick left */
+#define CGL_INPUT_DOWN     (2) /**< Joystick down */
+#define CGL_INPUT_RIGHT    (3) /**< Joystick right */
+#define CGL_INPUT_P1_START (4) /**< Player 1 Start */
+#define CGL_INPUT_P2_START (5) /**< Player 2 Start */
 
 typedef struct CGL_Context CGL_Context;
 
