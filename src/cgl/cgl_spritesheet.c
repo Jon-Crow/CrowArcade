@@ -116,6 +116,17 @@ CGL_TextureRegion* CGL_SpriteSheetCreateSpriteAt(CGL_SpriteSheet *sheet, int col
   return CGL_CreateTextureRegion(sheet->tx, &rect);
 }
 
+void CGL_SpriteSheetToString(CGL_SpriteSheet* sheet, char *str, size_t strLen)
+{
+  snprintf(str, strLen, "CGL_SpriteSheet{tx=\"%s\",spriteW=%d, spriteH=%d, cols=%d, rows=%d}", 
+    CGL_TextureGetPath(sheet->tx),
+    sheet->spriteW, 
+    sheet->spriteH, 
+    sheet->cols, 
+    sheet->rows
+  );
+}
+
 void CGL_DestroySpriteSheet(CGL_SpriteSheet *sheet)
 {
   if(sheet != NULL)

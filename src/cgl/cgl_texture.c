@@ -12,6 +12,7 @@
 
 struct CGL_Texture {
   SDL_Texture *img;
+  const char *path; //NOTE: Do not free this
   int width;
   int height;
 };
@@ -80,6 +81,7 @@ CGL_Texture* CGL_LoadTexture(SDL_Renderer *rend, const char *path)
     return NULL;
 
   tx->img = img;
+  tx->path = path;
   tx->width = width;
   tx->height = height;
 
@@ -89,6 +91,11 @@ CGL_Texture* CGL_LoadTexture(SDL_Renderer *rend, const char *path)
 SDL_Texture* CGL_TextureGetImage(CGL_Texture *tx)
 {
   return tx->img;
+}
+
+const char* CGL_TextureGetPath(CGL_Texture *tx)
+{
+  return tx->path;
 }
 
 int CGL_TextureGetWidth(CGL_Texture *tx)
@@ -202,6 +209,11 @@ void CGL_TextureRegionGetRect(CGL_TextureRegion *reg, SDL_Rect *bounds)
 void CGL_TextureRegionSetRect(CGL_TextureRegion *reg, const SDL_Rect *bounds)
 {
   reg->rect = *bounds;
+}
+
+void CGL_TextureToString(CGL_Texture* tx, char *str, size_t strLen)
+{
+  snprintf(str, strLen, "CGL_Texture{path=\"%s\", width=%d, height=%d}", tx->path, tx->width, tx->height);
 }
 
 void CGL_DestroyTexture(CGL_Texture *tx)

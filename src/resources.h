@@ -22,18 +22,38 @@
 #define TEXTURE_PAC_MAN_LEVELS_PATH ("res/texture/pac_man/levels.png")     /**< Index of pac man levels texture */
 #define TEXTURE_FROGGER_FROG_PATH   ("res/texture/frogger/frog.png")       /**< Path of frogger frog texture */
 
+#define SPRITE_SHEET_COUNT (6) /**< */
+
+#define SPRITE_SHEET_SPLASH_SCREEN  (0) /**< */
+#define SPRITE_SHEET_PAC_MAN_FONT   (1) /**< */
+#define SPRITE_SHEET_PAC_MAN_PLAYER (2) /**< */
+#define SPRITE_SHEET_PAC_MAN_GHOSTS (3) /**< */
+#define SPRITE_SHEET_PAC_MAN_LEVELS (4) /**< */
+#define SPRITE_SHEET_FROGGER_FROG   (5) /**< */
+
+#define SPRITE_SHEET_SPLASH_SCREEN_SPRITE_WIDTH   (224) /**< */
+#define SPRITE_SHEET_SPLASH_SCREEN_SPRITE_HEIGHT  (288) /**< */
+#define SPRITE_SHEET_PAC_MAN_FONT_SPRITE_WIDTH    (8)   /**< */
+#define SPRITE_SHEET_PAC_MAN_FONT_SPRITE_HEIGHT   (8)   /**< */
+#define SPRITE_SHEET_PAC_MAN_PLAYER_SPRITE_WIDTH  (16)  /**< */
+#define SPRITE_SHEET_PAC_MAN_PLAYER_SPRITE_HEIGHT (16)  /**< */
+#define SPRITE_SHEET_PAC_MAN_GHOSTS_SPRITE_WIDTH  (16)  /**< */
+#define SPRITE_SHEET_PAC_MAN_GHOSTS_SPRITE_HEIGHT (16)  /**< */
+#define SPRITE_SHEET_PAC_MAN_LEVELS_SPRITE_WIDTH  (224) /**< */
+#define SPRITE_SHEET_PAC_MAN_LEVELS_SPRITE_HEIGHT (248) /**< */
+#define SPRITE_SHEET_FROGGER_FROG_SPRITE_WIDTH    (16)  /**< */
+#define SPRITE_SHEET_FROGGER_FROG_SPRITE_HEIGHT   (16)  /**< */
+
 #define FONT_COUNT (1) /**< Total number of fonts to be globally allocated */
 
 #define FONT_PAC_MAN (0) /**< Index of pac man font */
-
-#define FONT_PAC_MAN_CHAR_WIDTH  (8) /**< Pac man font character width */
-#define FONT_PAC_MAN_CHAR_HEIGHT (8) /**< Pac man font character height */
 
 #define FONT_PAC_MAN_CHARS ("ABCDEFGHIJKLMNOPQRSTUVWXYZ!/-\"0123456789 ") /**< Pac man font characters */
 
 bool InitResources(CGL_Context *ctx);
 
 CGL_Texture* ResourcesGetTexture(size_t idx);
+CGL_SpriteSheet* ResourcesGetSpriteSheet(size_t idx);
 CGL_Font* ResourcesGetFont(size_t idx);
 
 void DestroyResources();

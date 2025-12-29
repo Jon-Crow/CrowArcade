@@ -12,24 +12,15 @@ struct SplashScreenData {
 
 int SplashScreenInit(CGL_Screen *screen)
 {
-  CGL_Texture *tx = ResourcesGetTexture(TEXTURE_SPLASH_SCREEN);
-
-  CGL_SpriteSheet *sheet = CGL_CreateSpriteSheet(tx, 224, 288);
-  if(sheet == NULL)
-    return -1;
-
+  CGL_SpriteSheet *sheet = ResourcesGetSpriteSheet(SPRITE_SHEET_SPLASH_SCREEN);
   CGL_Animation *splash = CGL_AnimationFromRows(sheet, 0, 2, 7, false);
   if(splash == NULL)
-  {
-    CGL_DestroySpriteSheet(sheet);
     return -1;
-  }
   
   SplashScreenData *data = (SplashScreenData*)malloc(sizeof(SplashScreenData));
   if(data == NULL)
   {
     CGL_DestroyAnimation(splash);
-    CGL_DestroySpriteSheet(sheet);
     return -1;
   }
 
@@ -37,7 +28,6 @@ int SplashScreenInit(CGL_Screen *screen)
   data->timer = 60*5;
   CGL_ScreenSetData(screen, data);
 
-  CGL_DestroySpriteSheet(sheet);
   return 0;
 }
 

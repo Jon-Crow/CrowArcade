@@ -39,6 +39,8 @@ void CGL_SpriteSheetGetSpriteAt(CGL_SpriteSheet *sheet, int col, int row, CGL_Te
 void CGL_SpriteSheetGetSpriteAtIndex(CGL_SpriteSheet *sheet, int idx, CGL_TextureRegion *reg);
 CGL_TextureRegion* CGL_SpriteSheetCreateSpriteAt(CGL_SpriteSheet *sheet, int col, int row);
 
+void CGL_SpriteSheetToString(CGL_SpriteSheet* sheet, char *str, size_t strLen);
+
 void CGL_DestroySpriteSheet(CGL_SpriteSheet *sheet);
 
 #endif

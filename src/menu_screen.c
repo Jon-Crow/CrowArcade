@@ -36,37 +36,27 @@ int MenuScreenInit(CGL_Screen *screen)
 
   CGL_Animation *leftGhostAnim = NULL;
   CGL_Animation *rightGhostAnim = NULL;
-  CGL_Texture *ghostTx = ResourcesGetTexture(TEXTURE_PAC_MAN_GHOSTS);
-  CGL_SpriteSheet *ghostSheet = CGL_CreateSpriteSheet(ghostTx, 16, 16);
-  if(ghostSheet != NULL)
-  {
-    leftGhostAnim = CGL_InitAnimation(2, 10, true);
-    CGL_SpriteSheetGetSpriteAt(ghostSheet, 0, 0, CGL_AnimationGetFrame(leftGhostAnim, 0));
-    CGL_SpriteSheetGetSpriteAt(ghostSheet, 1, 0, CGL_AnimationGetFrame(leftGhostAnim, 1));
+  CGL_SpriteSheet *ghostSheet = ResourcesGetSpriteSheet(SPRITE_SHEET_PAC_MAN_GHOSTS);
+  
+  leftGhostAnim = CGL_InitAnimation(2, 10, true);
+  CGL_SpriteSheetGetSpriteAt(ghostSheet, 0, 0, CGL_AnimationGetFrame(leftGhostAnim, 0));
+  CGL_SpriteSheetGetSpriteAt(ghostSheet, 1, 0, CGL_AnimationGetFrame(leftGhostAnim, 1));
 
-    rightGhostAnim = CGL_InitAnimation(2, 10, true);
-    CGL_SpriteSheetGetSpriteAt(ghostSheet, 2, 1, CGL_AnimationGetFrame(rightGhostAnim, 0));
-    CGL_SpriteSheetGetSpriteAt(ghostSheet, 3, 1, CGL_AnimationGetFrame(rightGhostAnim, 1));
-
-    CGL_DestroySpriteSheet(ghostSheet);
-  }
+  rightGhostAnim = CGL_InitAnimation(2, 10, true);
+  CGL_SpriteSheetGetSpriteAt(ghostSheet, 2, 1, CGL_AnimationGetFrame(rightGhostAnim, 0));
+  CGL_SpriteSheetGetSpriteAt(ghostSheet, 3, 1, CGL_AnimationGetFrame(rightGhostAnim, 1));
 
   CGL_Animation *leftFrogAnim = NULL;
   CGL_Animation *rightFrogAnim = NULL;
-  CGL_Texture *frogTx = ResourcesGetTexture(TEXTURE_FROGGER_FROG);
-  CGL_SpriteSheet *frogSheet = CGL_CreateSpriteSheet(frogTx, 16, 16);
-  if(frogSheet != NULL)
-  {
-    leftFrogAnim = CGL_InitAnimation(2, 10, true);
-    CGL_SpriteSheetGetSpriteAt(frogSheet, 2, 1, CGL_AnimationGetFrame(leftFrogAnim, 0));
-    CGL_SpriteSheetGetSpriteAt(frogSheet, 3, 1, CGL_AnimationGetFrame(leftFrogAnim, 1));
+  CGL_SpriteSheet *frogSheet = ResourcesGetSpriteSheet(SPRITE_SHEET_FROGGER_FROG);
 
-    rightFrogAnim = CGL_InitAnimation(2, 10, true);
-    CGL_SpriteSheetGetSpriteAt(frogSheet, 2, 0, CGL_AnimationGetFrame(rightFrogAnim, 0));
-    CGL_SpriteSheetGetSpriteAt(frogSheet, 3, 0, CGL_AnimationGetFrame(rightFrogAnim, 1));
+  leftFrogAnim = CGL_InitAnimation(2, 10, true);
+  CGL_SpriteSheetGetSpriteAt(frogSheet, 2, 1, CGL_AnimationGetFrame(leftFrogAnim, 0));
+  CGL_SpriteSheetGetSpriteAt(frogSheet, 3, 1, CGL_AnimationGetFrame(leftFrogAnim, 1));
 
-    CGL_DestroySpriteSheet(frogSheet);
-  }
+  rightFrogAnim = CGL_InitAnimation(2, 10, true);
+  CGL_SpriteSheetGetSpriteAt(frogSheet, 2, 0, CGL_AnimationGetFrame(rightFrogAnim, 0));
+  CGL_SpriteSheetGetSpriteAt(frogSheet, 3, 0, CGL_AnimationGetFrame(rightFrogAnim, 1));
 
   data->font = ResourcesGetFont(FONT_PAC_MAN);
   data->titleClr = (SDL_Color){

@@ -26,6 +26,7 @@ CGL_TextureRegion* CGL_CreateTextureRegion(CGL_Texture *tx, const SDL_Rect *rect
 CGL_Texture* CGL_LoadTexture(SDL_Renderer *rend, const char *path);
 
 SDL_Texture* CGL_TextureGetImage(CGL_Texture *tx);
+const char* CGL_TextureGetPath(CGL_Texture *tx);
 int CGL_TextureGetWidth(CGL_Texture *tx);
 int CGL_TextureGetHeight(CGL_Texture *tx);
 void CGL_TextureGetSize(CGL_Texture *tx, int *width, int *height);
@@ -52,6 +53,8 @@ void CGL_TextureRegionGetBounds(CGL_TextureRegion *reg, int *x, int *y, int *wid
 void CGL_TextureRegionSetBounds(CGL_TextureRegion *reg, int x, int y, int width, int height);
 void CGL_TextureRegionGetRect(CGL_TextureRegion *reg, SDL_Rect *bounds);
 void CGL_TextureRegionSetRect(CGL_TextureRegion *reg, const SDL_Rect *bounds);
+
+void CGL_TextureToString(CGL_Texture* tx, char *str, size_t strLen);
 
 void CGL_DestroyTexture(CGL_Texture *tx);
 void CGL_DestroyTextureRegion(CGL_TextureRegion *reg);
