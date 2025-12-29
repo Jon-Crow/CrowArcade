@@ -8,6 +8,7 @@
 struct PacManLevel {
   CGL_TextureRegion* mazeTx;
   PacManMazeCellType maze[PAC_MAN_MAZE_SIZE];
+  SDL_Color dotColor;
 };
 
 //FIX ME: Not finished
@@ -37,6 +38,8 @@ PacManLevel* CreatePacManLevel(int lvlCol, int lvlRow)
 
   for(int i = 0; i < PAC_MAN_MAZE_SIZE; i++)
     level->maze[i] = EMPTY;
+
+  level->dotColor = (SDL_Color){.r = 255, .g = 255, .b = 255, .a = 255};
 
   return level;
 }
@@ -126,9 +129,28 @@ PacManLevel* LoadPacManLevel(const char *jsonPath)
   return lvl;
 }
 
-void PacManLevelRender(CGL_Context *ctx, PacManLevel *lvl, int x, int y)
+void PacManLevelRender(CGL_Context *ctx, PacManLevel *lvl, int startX, int startY)
 {
-  CGL_DrawTextureRegion(ctx, lvl->mazeTx, x, y, -1, -1);
+  CGL_DrawTextureRegion(ctx, lvl->mazeTx, startX, startY, -1, -1);
+  int idx = 0;
+  for(int y = 0; y < PAC_MAN_MAZE_HEIGHT; y++)
+  {
+    for(int x = 0; x < PAC_MAN_MAZE_WIDTH; x++)
+    {
+      switch(lvl->maze[idx])
+      {
+        case DOT:
+          CGL_GraphicsDrawFilledRect(ctx, startX + x*8 + 3, startY + y*8 + 3, 2, 2, &lvl->dotColor);
+          break;
+        case SUPER_DOT:
+          CGL_GraphicsDrawFilledCircle(ctx, startX + x*8 + 4, startY + y*8 + 4, 4, &lvl->dotColor);
+          break;
+        
+        default:
+      }
+      idx++;
+    }
+  }
 }
 
 void DestroyPacManLevel(PacManLevel* level)

@@ -18,7 +18,7 @@ else
 endif
 
 INCLUDE_DIRS = -I$(CJSON_DIR)
-LIBS = -lSDL2_image
+LIBS = -lSDL2_image -lSDL2_gfx
 
 VALGRIND_OPTS = --leak-check=full --track-origins=yes --log-file=valgrind.log
 CPPCHECK_OPTS = --std=c11 --check-level=exhaustive --template="{file}:{line}: {severity}: {message}" --output-file=cppcheck.log
