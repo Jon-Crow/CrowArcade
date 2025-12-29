@@ -28,7 +28,7 @@ CPPCHECK_OPTS = --std=c11 --check-level=exhaustive --template="{file}:{line}: {s
 all: clean compile
 
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR) docs *.log
 
 compile:
 	mkdir -p $(BUILD_DIR)
@@ -52,7 +52,7 @@ cppcheck:
 	cppcheck $(CPPCHECK_OPTS) $(SRC_DIR)
 
 clang_tidy:
-	clang-tidy $(ALL_C_FILES) -- -std=c11 -Wall -Wextra `sdl2-config --cflags`
+	clang-tidy $(ALL_C_FILES) -- $(INCLUDE_DIRS) -std=c11 -Wall -Wextra `sdl2-config --cflags`
 
 docs:
 	doxygen Doxyfile

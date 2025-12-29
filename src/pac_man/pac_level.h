@@ -27,6 +27,8 @@ PacManLevel* CreatePacManLevel(int lvlCol, int lvlRow);
 
 PacManLevel* LoadPacManLevel(const char *jsonPath);
 
+void PacManLevelRender(CGL_Context *ctx, PacManLevel *lvl, int x, int y);
+
 void DestroyPacManLevel(PacManLevel* level);
 
 #endif

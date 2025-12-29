@@ -5,6 +5,7 @@
 
 #include "resources.h"
 #include "pac_man/pac_man.h"
+#include "pac_man/pac_level.h"
 
 #define GAME_OPTION_COUNT (2)
 #define GAME_OPTION_PAC_MAN (0)
@@ -57,7 +58,18 @@ int MenuScreenInit(CGL_Screen *screen)
                                               PacManScreenDestroy,
                                               rend);
   if(pacManScreen != NULL)
+  {
     CGL_ScreenInit(pacManScreen);
+    //FIX ME: Move this to level select screen eventually
+    PacManLevel *lvl = LoadPacManLevel("res/json/pac_man/level0.json");
+    if(lvl != NULL)
+    {
+      printf("Successfully parsed level json.\n");
+      PacManScreenSetLevel(pacManScreen, lvl);
+    }
+    else
+      printf("Failed to parse level json!\n");
+  }
   else
     printf("ERROR: Failed to create Pac-Man screen!\n");
 

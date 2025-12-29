@@ -3,6 +3,9 @@
 #define PAC_MAN_H
 
 #include "../cgl/cgl.h"
+#include "pac_level.h"
+
+void PacManScreenSetLevel(CGL_Screen *screen, PacManLevel *lvl);
 
 int PacManScreenInit(CGL_Screen *screen);
 void PacManScreenUpdate(CGL_Screen *screen, CGL_Context *ctx);

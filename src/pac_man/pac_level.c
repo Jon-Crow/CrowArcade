@@ -15,7 +15,12 @@ PacManLevel* CreatePacManLevel(int lvlCol, int lvlRow)
 {
   CGL_SpriteSheet *lvlSheet = ResourcesGetSpriteSheet(SPRITE_SHEET_PAC_MAN_LEVELS);
   if(!CGL_SpriteSheetIsInBounds(lvlSheet, lvlCol, lvlRow))
+  {
+    printf("Provided Pac-Man level texture index out of bounds.\n");
+    printf("Requested: %d,%d\n", lvlCol, lvlRow);
+    printf("Sheet size: %d,%d\n", CGL_SpriteSheetGetColumns(lvlSheet), CGL_SpriteSheetGetRows(lvlSheet));
     return NULL;
+  }
 
   PacManLevel* level = (PacManLevel*)malloc(sizeof(PacManLevel));
   if(level == NULL)
@@ -27,6 +32,8 @@ PacManLevel* CreatePacManLevel(int lvlCol, int lvlRow)
     free(level);
     return NULL;
   }
+
+  CGL_SpriteSheetGetSpriteAt(lvlSheet, lvlCol, lvlRow, level->mazeTx);
 
   for(int i = 0; i < PAC_MAN_MAZE_SIZE; i++)
     level->maze[i] = EMPTY;
@@ -108,6 +115,7 @@ PacManLevel* LoadPacManLevel(const char *jsonPath)
 
   cJSON_Delete(json);
 
+  printf("Creating Pac-Man level with map texture at %d, %d\n", lvlCol, lvlRow);
   PacManLevel *lvl = CreatePacManLevel(lvlCol, lvlRow);
   if(lvl == NULL)
     return NULL;
@@ -116,6 +124,11 @@ PacManLevel* LoadPacManLevel(const char *jsonPath)
     lvl->maze[i] = maze[i];
 
   return lvl;
+}
+
+void PacManLevelRender(CGL_Context *ctx, PacManLevel *lvl, int x, int y)
+{
+  CGL_DrawTextureRegion(ctx, lvl->mazeTx, x, y, -1, -1);
 }
 
 void DestroyPacManLevel(PacManLevel* level)

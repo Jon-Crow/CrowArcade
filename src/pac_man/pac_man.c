@@ -10,6 +10,9 @@
 #define PAC_MAN_GHOST_INKY   (2)
 #define PAC_MAN_GHOST_CLYDE  (3)
 
+#define PAC_MAN_LEVEL_X (0)
+#define PAC_MAN_LEVEL_Y (20)
+
 typedef enum {
   START_DELAY,
   PLAY,
@@ -44,6 +47,7 @@ struct PacManPlayer {
 typedef struct PacManScreenData PacManScreenData;
 
 struct PacManScreenData {
+  PacManLevel *lvl;
   PacManGameState state;
   int timer;
   PacManPlayer plyr;
@@ -62,12 +66,20 @@ void InkyUpdate()
 void ClydeUpdate()
 {}
 
+void PacManScreenSetLevel(CGL_Screen *screen, PacManLevel *lvl)
+{
+  PacManScreenData *data = CGL_ScreenGetData(screen);
+  if(data != NULL)
+    data->lvl = lvl;
+}
+
 int PacManScreenInit(CGL_Screen *screen)
 {
   PacManScreenData *data = (PacManScreenData*)malloc(sizeof(PacManScreenData));
   if(data == NULL)
     return -1;
 
+  data->lvl = NULL;
   data->state = START_DELAY;
   data->timer = 0;
   
@@ -143,25 +155,64 @@ void PacManScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
   switch(data->state)
   {
     case START_DELAY:
-      PacManScreenUpdateStartDelay();
+      PacManScreenUpdateStartDelay(screen, ctx);
       break;
     case PLAY:
-      PacManScreenUpdatePlay();
+      PacManScreenUpdatePlay(screen, ctx);
       break;
     case DEATH:
-      PacManScreenUpdateDeath();
+      PacManScreenUpdateDeath(screen, ctx);
       break;
     case GAME_OVER:
-      PacManScreenUpdateGameOver();
+      PacManScreenUpdateGameOver(screen, ctx);
       break;
     default:
       printf("ERROR: Game in unknown state!\n");
   }
 }
 
-void PacManScreenRender(CGL_Screen *screen, CGL_Context *ctx)
+void PacManScreenRenderStartDelay(CGL_Screen *screen, CGL_Context *ctx)
 {
 
+}
+
+void PacManScreenRenderPlay(CGL_Screen *screen, CGL_Context *ctx)
+{
+
+}
+
+void PacManScreenRenderDeath(CGL_Screen *screen, CGL_Context *ctx)
+{
+
+}
+
+void PacManScreenRenderGameOver(CGL_Screen *screen, CGL_Context *ctx)
+{
+
+}
+
+void PacManScreenRender(CGL_Screen *screen, CGL_Context *ctx)
+{
+  PacManScreenData *data = CGL_ScreenGetData(screen);
+
+  if(data->lvl != NULL)
+    PacManLevelRender(ctx, data->lvl, PAC_MAN_LEVEL_X, PAC_MAN_LEVEL_Y);
+
+  switch(data->state)
+  {
+    case START_DELAY:
+      PacManScreenRenderStartDelay(screen, ctx);
+      break;
+    case PLAY:
+      PacManScreenRenderPlay(screen, ctx);
+      break;
+    case DEATH:
+      PacManScreenRenderDeath(screen, ctx);
+      break;
+    case GAME_OVER:
+      PacManScreenRenderGameOver(screen, ctx);
+      break;
+  }
 }
 
 void PacManScreenDestroy(CGL_Screen *screen)
