@@ -4,6 +4,8 @@
 
 #include <stdbool.h>
 
+#include "cJSON.h"
+
 #include "cgl/cgl.h"
 
 #define TEXTURE_COUNT (6) /**< Total number of textures to be globally allocated */
@@ -55,6 +57,8 @@ bool InitResources(CGL_Context *ctx);
 CGL_Texture* ResourcesGetTexture(size_t idx);
 CGL_SpriteSheet* ResourcesGetSpriteSheet(size_t idx);
 CGL_Font* ResourcesGetFont(size_t idx);
+
+cJSON* ResourcesParseJsonFile(const char *path);
 
 void DestroyResources();
 

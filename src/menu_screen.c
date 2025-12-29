@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "resources.h"
+#include "pac_man/pac_man.h"
 
 #define GAME_OPTION_COUNT (2)
 #define GAME_OPTION_PAC_MAN (0)
@@ -30,6 +31,10 @@ struct MenuScreenData {
 
 int MenuScreenInit(CGL_Screen *screen)
 {
+  SDL_Renderer *rend = CGL_ScreenGetData(screen);
+  if(rend == NULL)
+    return -1;
+
   MenuScreenData *data = (MenuScreenData*)malloc(sizeof(MenuScreenData));
   if(data == NULL)
     return -1;
@@ -45,6 +50,16 @@ int MenuScreenInit(CGL_Screen *screen)
   rightGhostAnim = CGL_InitAnimation(2, 10, true);
   CGL_SpriteSheetGetSpriteAt(ghostSheet, 2, 1, CGL_AnimationGetFrame(rightGhostAnim, 0));
   CGL_SpriteSheetGetSpriteAt(ghostSheet, 3, 1, CGL_AnimationGetFrame(rightGhostAnim, 1));
+
+  CGL_Screen *pacManScreen = CGL_CreateScreen(PacManScreenInit,
+                                              PacManScreenUpdate,
+                                              PacManScreenRender,
+                                              PacManScreenDestroy,
+                                              rend);
+  if(pacManScreen != NULL)
+    CGL_ScreenInit(pacManScreen);
+  else
+    printf("ERROR: Failed to create Pac-Man screen!\n");
 
   CGL_Animation *leftFrogAnim = NULL;
   CGL_Animation *rightFrogAnim = NULL;
@@ -72,7 +87,7 @@ int MenuScreenInit(CGL_Screen *screen)
     .title = "PAC-MAN",
     .leftAnim = leftGhostAnim,
     .rightAnim = rightGhostAnim,
-    .screen = NULL
+    .screen = pacManScreen
   };
   data->opts[GAME_OPTION_FROGGER] = (GameOption){
     .title = "FROGGER",

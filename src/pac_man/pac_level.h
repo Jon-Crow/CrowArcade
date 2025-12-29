@@ -10,16 +10,22 @@
 #define PAC_MAN_MAZE_HEIGHT (31)
 #define PAC_MAN_MAZE_SIZE   (868)
 
+#define PAC_MAN_JSON_KEY_TX_COL ("tx_col")
+#define PAC_MAN_JSON_KEY_TX_ROW ("tx_row")
+#define PAC_MAN_JSON_KEY_MAZE   ("maze")
+
 typedef enum {
-  EMPTY,
-  WALL,
-  DOT,
-  SUPER_DOT
+  EMPTY     = 0,
+  WALL      = 1,
+  DOT       = 2,
+  SUPER_DOT = 3
 } PacManMazeCellType;
 
 typedef struct PacManLevel PacManLevel;
 
-PacManLevel* CreatePacManLevel();
+PacManLevel* CreatePacManLevel(int lvlCol, int lvlRow);
+
+PacManLevel* LoadPacManLevel(const char *jsonPath);
 
 void DestroyPacManLevel(PacManLevel* level);
 

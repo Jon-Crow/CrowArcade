@@ -81,6 +81,15 @@ void CGL_SpriteSheetGetGridSize(CGL_SpriteSheet *sheet, int *rows, int *cols)
   *cols = sheet->cols;
 }
 
+bool CGL_SpriteSheetIsInBounds(CGL_SpriteSheet *sheet, int col, int row)
+{
+  if(col < 0 || col >= sheet->cols)
+    return false;
+  if(row < 0 || row >= sheet->rows)
+    return false;
+  return true;
+}
+
 void CGL_SpriteSheetGetRectAt(CGL_SpriteSheet *sheet, int col, int row, SDL_Rect *rect)
 {
   rect->x = sheet->spriteW * col;

@@ -1,6 +1,8 @@
 
 #include "pac_level.h"
 
+#include "cJSON.h"
+
 #include "../resources.h"
 
 struct PacManLevel {
@@ -11,16 +13,113 @@ struct PacManLevel {
 //FIX ME: Not finished
 PacManLevel* CreatePacManLevel(int lvlCol, int lvlRow)
 {
+  CGL_SpriteSheet *lvlSheet = ResourcesGetSpriteSheet(SPRITE_SHEET_PAC_MAN_LEVELS);
+  if(!CGL_SpriteSheetIsInBounds(lvlSheet, lvlCol, lvlRow))
+    return NULL;
+
   PacManLevel* level = (PacManLevel*)malloc(sizeof(PacManLevel));
   if(level == NULL)
     return NULL;
+  
+  level->mazeTx = CGL_InitTextureRegion();
+  if(level->mazeTx == NULL)
+  {
+    free(level);
+    return NULL;
+  }
+
+  for(int i = 0; i < PAC_MAN_MAZE_SIZE; i++)
+    level->maze[i] = EMPTY;
 
   return level;
 }
 
+bool IsValidPacManMazeCellType(PacManMazeCellType val)
+{
+  switch(val)
+  {
+    case EMPTY:
+    case WALL:
+    case DOT:
+    case SUPER_DOT:
+      return true;
+    default:
+      return false;
+  }
+}
+
+bool PacManLevelParseMaze(cJSON *lvlJson, PacManMazeCellType *maze)
+{
+  cJSON *mazeJson = cJSON_GetObjectItemCaseSensitive(lvlJson, PAC_MAN_JSON_KEY_MAZE);
+  if(cJSON_IsArray(mazeJson))
+  {
+    int mazeLen = cJSON_GetArraySize(mazeJson);
+    if(mazeLen == PAC_MAN_MAZE_SIZE)
+    {
+      for(int i = 0; i < PAC_MAN_MAZE_SIZE; i++)
+      {
+        cJSON *cell = cJSON_GetArrayItem(mazeJson, i);
+        if(cJSON_IsNumber(cell))
+        {
+          if(IsValidPacManMazeCellType(cell->valueint))
+            maze[i] = cell->valueint;
+          else
+            return false;
+        }
+        else
+          return false;
+      }
+    }
+    else
+      return false;
+  }
+  else
+    return false;
+
+  return true;
+}
+
+PacManLevel* LoadPacManLevel(const char *jsonPath)
+{
+  cJSON *json = ResourcesParseJsonFile(jsonPath);
+  if(json == NULL)
+    return NULL;
+
+  cJSON *lvlColJson = cJSON_GetObjectItemCaseSensitive(json, PAC_MAN_JSON_KEY_TX_COL);
+  int lvlCol = -1;
+  if(cJSON_IsNumber(lvlColJson))
+    lvlCol = lvlColJson->valueint;
+  else
+    printf("ERROR: Level json key missing or invalid: %s\n", PAC_MAN_JSON_KEY_TX_COL);
+
+  cJSON *lvlRowJson = cJSON_GetObjectItemCaseSensitive(json, PAC_MAN_JSON_KEY_TX_ROW);
+  int lvlRow = -1;
+  if(cJSON_IsNumber(lvlRowJson))
+    lvlRow = lvlRowJson->valueint;
+  else
+    printf("ERROR: Level json key missing or invalid: %s\n", PAC_MAN_JSON_KEY_TX_ROW);
+
+  PacManMazeCellType maze[PAC_MAN_MAZE_SIZE];
+  if(!PacManLevelParseMaze(json, maze))
+  {
+    printf("ERROR: Level json key missing or invalid: %s\n", PAC_MAN_JSON_KEY_MAZE);
+    return NULL;
+  }
+
+  cJSON_Delete(json);
+
+  PacManLevel *lvl = CreatePacManLevel(lvlCol, lvlRow);
+  if(lvl == NULL)
+    return NULL;
+
+  for(int i = 0; i < PAC_MAN_MAZE_SIZE; i++)
+    lvl->maze[i] = maze[i];
+
+  return lvl;
+}
+
 void DestroyPacManLevel(PacManLevel* level)
 {
-  if(level == NULL)
-    return;
-  free(level);
+  if(level != NULL)
+    free(level);
 }

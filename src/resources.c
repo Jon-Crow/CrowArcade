@@ -1,6 +1,9 @@
 
 #include "resources.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+
 typedef struct Resources Resources;
 
 struct Resources {
@@ -90,6 +93,33 @@ CGL_Font* ResourcesGetFont(size_t idx)
   if(idx >= FONT_COUNT)
     return NULL;
   return res.fonts[idx];
+}
+
+cJSON* ResourcesParseJsonFile(const char *path)
+{
+  FILE *f = fopen(path, "r");
+  if(f == NULL)
+    return NULL;
+
+  fseek(f, 0, SEEK_END);
+  long len = ftell(f);
+  fseek(f, 0, SEEK_SET);
+
+  char *jsonStr = (char*)malloc(len + 1);
+  if(jsonStr == NULL)
+  {
+    fclose(f);
+    return NULL;
+  }
+
+  fread(jsonStr, 1, len, f);
+  jsonStr[len] = '\0';
+  fclose(f);
+
+  cJSON *json = cJSON_Parse(jsonStr);
+  free(jsonStr);
+
+  return json;
 }
 
 void DestroyResources()

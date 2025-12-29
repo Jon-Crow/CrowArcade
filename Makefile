@@ -12,11 +12,12 @@ EXECUTABLE = crow_arcade
 BUILD_TYPE ?= debug
 
 ifeq ($(BUILD_TYPE), debug)
-	GCC_OPTS := -g -O0 -fno-omit-frame-pointer -Wall -Wextra -Wpedantic
+	GCC_OPTS := -g -O0 -fno-omit-frame-pointer -Wall -Wextra -Wpedantic -Wno-unused-parameter
 else
 	GCC_OPTS := -O2 -DNDEBUG -Wall
 endif
 
+INCLUDE_DIRS = -I$(CJSON_DIR)
 LIBS = -lSDL2_image
 
 VALGRIND_OPTS = --leak-check=full --track-origins=yes --log-file=valgrind.log
@@ -32,6 +33,7 @@ clean:
 compile:
 	mkdir -p $(BUILD_DIR)
 	gcc $(GCC_OPTS) \
+			$(INCLUDE_DIRS) \
 			$(ALL_C_FILES) \
 			-o $(BUILD_DIR)/$(EXECUTABLE) \
 			`sdl2-config --cflags --libs` \

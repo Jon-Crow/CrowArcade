@@ -9,6 +9,8 @@
 #ifndef CGL_SPRITESHEET_H
 #define CGL_SPRITESHEET_H
 
+#include <stdbool.h>
+
 #include <SDL2/SDL.h>
 
 #include "cgl_texture.h"
@@ -31,7 +33,8 @@ void CGL_SpriteSheetGetSpriteSize(CGL_SpriteSheet *sheet, int *spriteW, int *spr
 
 int CGL_SpriteSheetGetRows(CGL_SpriteSheet *sheet);
 int CGL_SpriteSheetGetColumns(CGL_SpriteSheet *sheet);
-void CGL_SpriteSheetGetGridSize(CGL_SpriteSheet *sheet, int *rows, int *cols);
+void CGL_SpriteSheetGetGridSize(CGL_SpriteSheet *sheet, int *rows, int *cols); //FIX ME: swap rows/cols
+bool CGL_SpriteSheetIsInBounds(CGL_SpriteSheet *sheet, int col, int row);
 
 void CGL_SpriteSheetGetRectAt(CGL_SpriteSheet *sheet, int col, int row, SDL_Rect *rect);
 SDL_Rect CGL_SpriteSheetCreateRectAt(CGL_SpriteSheet *sheet, int col, int row);
