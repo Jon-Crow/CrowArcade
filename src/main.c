@@ -115,6 +115,7 @@ int main(void)
   }
   printf("done.\n");
 
+  CGL_ScreenInit(screen);
   CGL_ContextSetScreen(ctx, screen);
 
   printf("Initializing splash screen... ");

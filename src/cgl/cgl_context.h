@@ -60,6 +60,8 @@ SDL_Texture* CGL_ContextGetGameTexture(CGL_Context *ctx);
 CGL_Screen* CGL_ContextGetScreen(CGL_Context *ctx);
 
 /**
+*@note This does NOT call the previous screen's destroy function OR the init function of the new screen.
+*
 *@param ctx    Context to be modified
 *@param screen The updated value of the context's screen
 */

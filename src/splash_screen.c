@@ -45,7 +45,11 @@ void SplashScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
                                         MenuScreenDestroy,
                                         CGL_ContextGetRenderer(ctx));
     if(menu != NULL)
+    {
+      CGL_ScreenInit(menu);
       CGL_ContextSetScreen(ctx, menu);
+      CGL_DestroyScreen(screen);
+    }
     else
       printf("Failed to create menu screen.\n");
   }
