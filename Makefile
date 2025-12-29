@@ -2,7 +2,10 @@
 SRC_DIR     = ./src
 CGL_DIR     = ./src/cgl
 PAC_MAN_DIR = ./src/pac_man
+CJSON_DIR   = ./external/cjson
 BUILD_DIR   = ./build
+
+ALL_C_FILES = $(SRC_DIR)/*.c $(CGL_DIR)/*.c $(PAC_MAN_DIR)/*.c $(CJSON_DIR)/cJSON.c
 
 EXECUTABLE = crow_arcade
 
@@ -29,9 +32,7 @@ clean:
 compile:
 	mkdir -p $(BUILD_DIR)
 	gcc $(GCC_OPTS) \
-			$(CGL_DIR)/*.c \
-	    $(SRC_DIR)/*.c \
-			$(PAC_MAN_DIR)/*.c \
+			$(ALL_C_FILES) \
 			-o $(BUILD_DIR)/$(EXECUTABLE) \
 			`sdl2-config --cflags --libs` \
 			$(LIBS)
@@ -49,7 +50,7 @@ cppcheck:
 	cppcheck $(CPPCHECK_OPTS) $(SRC_DIR)
 
 clang_tidy:
-	clang-tidy $(SRC_DIR)/*.c $(CGL_DIR)/*.c $(PAC_MAN_DIR)/*.c -- -std=c11 -Wall -Wextra `sdl2-config --cflags`
+	clang-tidy $(ALL_C_FILES) -- -std=c11 -Wall -Wextra `sdl2-config --cflags`
 
 docs:
 	doxygen Doxyfile
