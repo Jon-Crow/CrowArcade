@@ -22,7 +22,7 @@ typedef struct PacManScreenData PacManScreenData;
 typedef void (*PacManCharUpdate)(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data, int col, int row);
 typedef void (*PacManCharRender)(CGL_Context *ctx, PacManChar *ch);
 
-typedef void (*GhostAIUpdate)(PacManGhost *ghost, CGL_Context *ctx, PacManLevel *lvl, int col, int row);
+typedef void (*GhostAIUpdate)(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, int col, int row);
 
 typedef enum {
   START_DELAY,
@@ -105,19 +105,27 @@ void PlayerUpdate(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data, int 
 
 void GhostUpdate(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data, int col, int row)
 {
-  
+  for(int i = 0; i < PAC_MAN_GHOST_COUNT; i++)
+  {
+    //FIX ME: This is not a good way to do this, but will work for now.
+    if(ch == &(data->ghosts[i].charData))
+    {
+      data->ghosts[i].aiFunc(&(data->ghosts[i]), ctx, data, col, row);
+      return;
+    }
+  }
 }
 
-void BlinkyUpdate(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data, int col, int row)
+void BlinkyUpdate(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, int col, int row)
 {}
 
-void PinkyUpdate(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data, int col, int row)
+void PinkyUpdate(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, int col, int row)
 {}
 
-void InkyUpdate(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data, int col, int row)
+void InkyUpdate(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, int col, int row)
 {}
 
-void ClydeUpdate(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data, int col, int row)
+void ClydeUpdate(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, int col, int row)
 {}
 
 CGL_Animation* GetCharAnimation(const PacManChar *ch)
@@ -305,23 +313,26 @@ int PacManScreenInit(CGL_Screen *screen)
   CGL_SpriteSheetGetSpriteAt(plyrSheet, 2, 0, CGL_AnimationGetFrame(data->plyr.charData.anims[RIGHT], 2));
 
   for(int i = 0; i < PAC_MAN_GHOST_COUNT; i++)
+  {
+    data->ghosts[i].charData.updateFunc = GhostUpdate;
     data->ghosts[i].charData.renderFunc = GhostRender;
+  }
 
   //BLINKY
   InitGhostAnims(ghostSheet, &(data->ghosts[PAC_MAN_GHOST_BLINKY].charData), 0);
-  data->ghosts[PAC_MAN_GHOST_BLINKY].charData.updateFunc = BlinkyUpdate;
+  data->ghosts[PAC_MAN_GHOST_BLINKY].aiFunc = BlinkyUpdate;
 
   //PINKY
   InitGhostAnims(ghostSheet, &(data->ghosts[PAC_MAN_GHOST_PINKY].charData), 1);
-  data->ghosts[PAC_MAN_GHOST_PINKY].charData.updateFunc = PinkyUpdate;
+  data->ghosts[PAC_MAN_GHOST_PINKY].aiFunc = PinkyUpdate;
 
   //INKY
   InitGhostAnims(ghostSheet, &(data->ghosts[PAC_MAN_GHOST_INKY].charData), 2);
-  data->ghosts[PAC_MAN_GHOST_INKY].charData.updateFunc = InkyUpdate;
+  data->ghosts[PAC_MAN_GHOST_INKY].aiFunc = InkyUpdate;
 
   //CLYDE
   InitGhostAnims(ghostSheet, &(data->ghosts[PAC_MAN_GHOST_CLYDE].charData), 3);
-  data->ghosts[PAC_MAN_GHOST_CLYDE].charData.updateFunc = ClydeUpdate;
+  data->ghosts[PAC_MAN_GHOST_CLYDE].aiFunc = ClydeUpdate;
 
   CGL_ScreenSetData(screen, data);
   return 0;
