@@ -154,10 +154,29 @@ void UpdateChar(PacManChar *ch, CGL_Context *ctx, PacManLevel *lvl, PacManCharUp
   {
     switch(ch->dir)
     {
-      case UP:    ch->pos.y--; break;
-      case LEFT:  ch->pos.x--; break;
-      case DOWN:  ch->pos.y++; break;
-      case RIGHT: ch->pos.x++; break;
+      case UP:
+        ch->pos.y--;
+        if(ch->pos.y < 0)
+          ch->pos.y = PAC_MAN_LEVEL_HEIGHT-1;
+        break;
+
+      case LEFT:
+        ch->pos.x--;
+        if(ch->pos.x < 0)
+          ch->pos.x = PAC_MAN_LEVEL_WIDTH-1;
+        break;
+
+      case DOWN:
+        ch->pos.y++;
+        if(ch->pos.y >= PAC_MAN_LEVEL_HEIGHT)
+          ch->pos.y = 0;
+        break;
+
+      case RIGHT:
+        ch->pos.x++;
+        if(ch->pos.x >= PAC_MAN_LEVEL_WIDTH)
+          ch->pos.x = 0;
+        break;
     }
   }
 }

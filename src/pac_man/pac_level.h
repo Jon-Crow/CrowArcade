@@ -11,6 +11,9 @@
 #define PAC_MAN_MAZE_HEIGHT (31)
 #define PAC_MAN_MAZE_SIZE   (868)
 
+#define PAC_MAN_LEVEL_WIDTH  (224)
+#define PAC_MAN_LEVEL_HEIGHT (248)
+
 #define PAC_MAN_JSON_KEY_TX_COL      ("tx_col")
 #define PAC_MAN_JSON_KEY_TX_ROW      ("tx_row")
 #define PAC_MAN_JSON_KEY_DOT_COLOR   ("dot_color")
