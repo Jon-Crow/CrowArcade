@@ -14,14 +14,19 @@
 #define PAC_MAN_LEVEL_X (0)
 #define PAC_MAN_LEVEL_Y (20)
 
+typedef struct PacManChar PacManChar;
+typedef struct PacManGhost PacManGhost;
+typedef struct PacManPlayer PacManPlayer;
+typedef struct PacManScreenData PacManScreenData;
+
+typedef void (*PacManCharUpdate)(PacManChar *ch, CGL_Context *ctx, PacManLevel *lvl, int col, int row);
+
 typedef enum {
   START_DELAY,
   PLAY,
   DEATH,
   GAME_OVER
 } PacManGameState;
-
-typedef void (*PacManGhostAIUpdate)();
 
 typedef enum {
   JAIL,
@@ -37,31 +42,24 @@ typedef enum {
   RIGHT = 3
 } PacManDirection;
 
-typedef struct PacManChar PacManChar;
-
 struct PacManChar {
   Vector2I pos;
   PacManDirection dir;
+  bool canMove[4];
   CGL_Animation *anims[4];
 };
-
-typedef struct PacManGhost PacManGhost;
 
 struct PacManGhost {
   PacManChar charData;
   PacManGhostState state;
-  PacManGhostAIUpdate aiUpdate;
+  PacManCharUpdate aiUpdate;
   int jailTimer;
 };
-
-typedef struct PacManPlayer PacManPlayer;
 
 struct PacManPlayer {
   PacManChar charData;
   int lives;
 };
-
-typedef struct PacManScreenData PacManScreenData;
 
 struct PacManScreenData {
   PacManLevel *lvl;
@@ -71,16 +69,44 @@ struct PacManScreenData {
   PacManGhost ghosts[PAC_MAN_GHOST_COUNT];
 };
 
-void BlinkyUpdate()
+void PlayerUpdate(PacManChar *ch, CGL_Context *ctx, PacManLevel *lvl, int col, int row)
+{
+  PacManMazeCellType curCell = PacManLevelGetCellAt(lvl, col, row);
+  if(curCell == DOT || curCell == SUPER_DOT)
+    PacManLevelSetCellAt(lvl, col, row, EMPTY);
+
+  if(CGL_ContextGetInput(ctx, CGL_INPUT_UP))
+  {
+    if(ch->canMove[UP])
+      ch->dir = UP;
+  }
+  else if(CGL_ContextGetInput(ctx, CGL_INPUT_LEFT))
+  {
+    if(ch->canMove[LEFT])
+      ch->dir = LEFT;
+  }
+  else if(CGL_ContextGetInput(ctx, CGL_INPUT_DOWN))
+  {
+    if(ch->canMove[DOWN])
+      ch->dir = DOWN;
+  }
+  else if(CGL_ContextGetInput(ctx, CGL_INPUT_RIGHT))
+  {
+    if(ch->canMove[RIGHT])
+      ch->dir = RIGHT;
+  }
+}
+
+void BlinkyUpdate(PacManChar *ch, CGL_Context *ctx, PacManLevel *lvl, int col, int row)
 {}
 
-void PinkyUpdate()
+void PinkyUpdate(PacManChar *ch, CGL_Context *ctx, PacManLevel *lvl, int col, int row)
 {}
 
-void InkyUpdate()
+void InkyUpdate(PacManChar *ch, CGL_Context *ctx, PacManLevel *lvl, int col, int row)
 {}
 
-void ClydeUpdate()
+void ClydeUpdate(PacManChar *ch, CGL_Context *ctx, PacManLevel *lvl, int col, int row)
 {}
 
 void PacManScreenSetLevel(CGL_Screen *screen, PacManLevel *lvl)
@@ -107,29 +133,24 @@ CGL_Animation* GetCharAnimation(const PacManChar *ch)
   return ch->anims[ch->dir];
 }
 
-bool IsWallNextToChar(PacManChar *ch, PacManDirection dir, PacManLevel *lvl)
-{
-  //This is probably overly convoluted, but it is meant to get the proper edge
-  //of the player's cell, depending on query and movement direction. Might
-  //break if the direction opposite of movement is checked
-  int col = (ch->dir == LEFT || dir == LEFT) ? (ch->pos.x + 7)/8 : ch->pos.x/8;
-  int row = (ch->dir == UP   || dir == UP  ) ? (ch->pos.y + 7)/8 : ch->pos.y/8;
-
-  switch(dir)
-  {
-    case UP:    return PacManLevelGetCellAt(lvl, col,   row-1) == WALL;
-    case LEFT:  return PacManLevelGetCellAt(lvl, col-1, row)   == WALL;
-    case DOWN:  return PacManLevelGetCellAt(lvl, col,   row+1) == WALL;
-    case RIGHT: return PacManLevelGetCellAt(lvl, col+1, row)   == WALL;
-    default: return true;
-  }
-}
-
-void UpdateChar(PacManChar *ch, PacManLevel *lvl)
+void UpdateChar(PacManChar *ch, CGL_Context *ctx, PacManLevel *lvl, PacManCharUpdate updateFunc)
 {
   CGL_AnimationUpdate(GetCharAnimation(ch));
 
-  if(!IsWallNextToChar(ch, ch->dir, lvl))
+  if(ch->pos.x % 8 == 0 && ch->pos.y % 8 == 0)
+  {
+    int col = ch->pos.x / 8;
+    int row = ch->pos.y / 8;
+
+    ch->canMove[UP]    = PacManLevelGetCellAt(lvl, col, row-1) != WALL;
+    ch->canMove[LEFT]  = PacManLevelGetCellAt(lvl, col-1, row) != WALL;
+    ch->canMove[DOWN]  = PacManLevelGetCellAt(lvl, col, row+1) != WALL;
+    ch->canMove[RIGHT] = PacManLevelGetCellAt(lvl, col+1, row) != WALL;
+
+    updateFunc(ch, ctx, lvl, col, row);
+  }
+
+  if(ch->canMove[ch->dir])
   {
     switch(ch->dir)
     {
@@ -167,12 +188,14 @@ int PacManScreenInit(CGL_Screen *screen)
   for(int i = 0; i < 4; i++)
   {
     data->plyr.charData.anims[i] = CGL_InitAnimation(3, 4, true);
+    data->plyr.charData.canMove[i] = false;
     if(data->plyr.charData.anims[i] == NULL)
       return -1;
 
     for(int g = 0; g < PAC_MAN_GHOST_COUNT; g++)
     {
       data->ghosts[g].charData.anims[i] = CGL_InitAnimation(2, 5, true);
+      data->ghosts[g].charData.canMove[i] = false;
       if(data->ghosts[g].charData.anims[i] == NULL)
         return -1;
     }
@@ -214,35 +237,7 @@ void PacManScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
 
   if(data->state == PLAY)
   {
-    UpdateChar(&(data->plyr.charData), data->lvl);
-
-    int col = (data->plyr.charData.pos.x + 4)/8;
-    int row = (data->plyr.charData.pos.y + 4)/8;
-    
-    PacManMazeCellType curCell = PacManLevelGetCellAt(data->lvl, col, row);
-    if(curCell == DOT || curCell == SUPER_DOT)
-      PacManLevelSetCellAt(data->lvl, col, row, EMPTY);
-
-    if(CGL_ContextGetInput(ctx, CGL_INPUT_UP))
-    {
-      if(!IsWallNextToChar(&(data->plyr.charData), UP, data->lvl))
-        data->plyr.charData.dir = UP;
-    }
-    else if(CGL_ContextGetInput(ctx, CGL_INPUT_LEFT))
-    {
-      if(!IsWallNextToChar(&(data->plyr.charData), LEFT, data->lvl))
-        data->plyr.charData.dir = LEFT;
-    }
-    else if(CGL_ContextGetInput(ctx, CGL_INPUT_DOWN))
-    {
-      if(!IsWallNextToChar(&(data->plyr.charData), DOWN, data->lvl))
-        data->plyr.charData.dir = DOWN;
-    }
-    else if(CGL_ContextGetInput(ctx, CGL_INPUT_RIGHT))
-    {
-      if(!IsWallNextToChar(&(data->plyr.charData), RIGHT, data->lvl))
-        data->plyr.charData.dir = RIGHT;
-    }
+    UpdateChar(&(data->plyr.charData), ctx, data->lvl, PlayerUpdate);
   }
 }
 

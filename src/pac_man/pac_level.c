@@ -198,24 +198,34 @@ PacManLevel* LoadPacManLevel(const char *jsonPath)
   return lvl;
 }
 
-void PacManLevelGetSpawn(PacManLevel* level, Vector2I *v)
+int CoordToIndex(PacManLevel *level, int col, int row)
+{
+  if(col < 0)
+    col += PAC_MAN_MAZE_WIDTH;
+  else if(col >= PAC_MAN_MAZE_WIDTH)
+    col -= PAC_MAN_MAZE_WIDTH;
+  
+  if(row < 0)
+    row += PAC_MAN_MAZE_HEIGHT;
+  else if(row >= PAC_MAN_MAZE_HEIGHT)
+    row -= PAC_MAN_MAZE_HEIGHT;
+
+  return row * PAC_MAN_MAZE_WIDTH + col;
+}
+
+void PacManLevelGetSpawn(PacManLevel *level, Vector2I *v)
 {
   *v = level->spawn;
 }
 
 PacManMazeCellType PacManLevelGetCellAt(PacManLevel *level, int col, int row)
 {
-  int idx = row*PAC_MAN_MAZE_WIDTH + col;
-  if(idx < 0 || idx >= PAC_MAN_MAZE_SIZE)
-    return WALL;
-  return level->maze[idx];
+  return level->maze[CoordToIndex(level, col, row)];
 }
 
 void PacManLevelSetCellAt(PacManLevel *level, int col, int row, PacManMazeCellType cell)
 {
-  int idx = row*PAC_MAN_MAZE_WIDTH + col;
-  if(idx < 0 || idx >= PAC_MAN_MAZE_SIZE)
-    return;
+  int idx = CoordToIndex(level, col, row);
 
   PacManMazeCellType prev = level->maze[idx];
   level->maze[idx] = cell;
