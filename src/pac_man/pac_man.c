@@ -35,11 +35,15 @@ typedef enum {
 
 typedef enum {
   JAIL,
+  JAIL_CENTER,
+  JAIL_EXIT,
   DISPERSE,
   NORMAL,
   VULNERABLE,
   EYEBALLS
 } PacManGhostState;
+
+#define PAC_MAN_DIRECTION_COUNT ((DIRECTION_MAX - DIRECTION_MIN) + 1)
 
 typedef enum {
   DIRECTION_MIN = 0,
@@ -49,8 +53,6 @@ typedef enum {
   RIGHT,
   DIRECTION_MAX = RIGHT
 } PacManDirection;
-
-#define PAC_MAN_DIRECTION_COUNT ((DIRECTION_MAX - DIRECTION_MIN) + 1)
 
 struct PacManChar {
   PacManCharUpdateFunc updateFunc;
@@ -66,6 +68,9 @@ struct PacManChar {
   CGL_Animation *anims[PAC_MAN_DIRECTION_COUNT];
   CGL_Animation *deadAnims[PAC_MAN_DIRECTION_COUNT];
 };
+
+#define PAC_MAN_GHOST_JAIL_CENTER_TARGET ((Vector2I){.x = 104, .y = 112})
+#define PAC_MAN_GHOST_JAIL_EXIT_TARGET   ((Vector2I){.x = 104, .y = 88})
 
 struct PacManGhost {
   PacManChar charData;
@@ -156,7 +161,34 @@ void GhostUpdate(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data)
     return;
   }
 
-  if(ghost->state == NORMAL)
+  PacManGhostState prevState = ghost->state;
+
+  if(ghost->state == JAIL)
+  {
+    ghost->jailTimer--;
+    if(ghost->jailTimer <= 0)
+    {
+      ch->deadTarget = PAC_MAN_GHOST_JAIL_CENTER_TARGET;
+      ghost->state = JAIL_CENTER;
+    }
+  }
+  else if(ghost->state == JAIL_CENTER)
+  {
+    if(IsEqualVector2I(&(ch->pos), &(ch->deadTarget)))
+    {
+      ch->deadTarget = PAC_MAN_GHOST_JAIL_EXIT_TARGET;
+      ghost->state = JAIL_EXIT;
+    }
+  }
+  else if(ghost->state == JAIL_EXIT)
+  {
+    if(IsEqualVector2I(&(ch->pos), &(ch->deadTarget)))
+    {
+      ch->dead = false;
+      ghost->state = NORMAL;
+    }
+  }
+  else if(ghost->state == NORMAL)
   {
     Vector2I target;
     Vector2I nextTile;
@@ -181,6 +213,9 @@ void GhostUpdate(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data)
 
     ch->dir = minDir;
   }
+
+  if(ghost->state != prevState)
+    CGL_LogInfo("Ghost changed from %d to %d", prevState, ghost->state);
 }
 
 void GetBlinkyTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, Vector2I *target)
@@ -189,7 +224,15 @@ void GetBlinkyTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *dat
 }
 
 void GetPinkyTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, Vector2I *target)
-{}
+{
+  switch(data->plyr.charData.dir)
+  {
+    case UP:    *target = (Vector2I){.x = data->plyr.charData.tilePos.x,     .y = data->plyr.charData.tilePos.y - 4}; break;
+    case LEFT:  *target = (Vector2I){.x = data->plyr.charData.tilePos.x - 4, .y = data->plyr.charData.tilePos.y    }; break;
+    case DOWN:  *target = (Vector2I){.x = data->plyr.charData.tilePos.x,     .y = data->plyr.charData.tilePos.y + 4}; break;
+    case RIGHT: *target = (Vector2I){.x = data->plyr.charData.tilePos.x + 4, .y = data->plyr.charData.tilePos.y    }; break;
+  }
+}
 
 void GetInkyTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, Vector2I *target)
 {}
@@ -208,7 +251,11 @@ void UpdateChar(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data)
 {
   if(ch->dead)
   {
-    CGL_AnimationUpdate(GetCharAnimation(ch));
+    //FIX ME: hacky solution to ghost anim/deadAnim issue.
+    CGL_AnimationUpdate(ch->anims[ch->dir]);
+    CGL_AnimationUpdate(ch->deadAnims[ch->dir]);
+
+    ch->updateFunc(ch, ctx, data);
 
     if(!IsEqualVector2I(&(ch->pos), &(ch->deadTarget)))
     {
@@ -216,7 +263,7 @@ void UpdateChar(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data)
       SubtractVector2I(&(ch->deadTarget), &(ch->pos), &diff);
       AbsVector2I(&diff, &diff);
 
-      if(diff.y > diff.x)
+      if(diff.x > diff.y && diff.x > 0)
       {
         if(ch->pos.x > ch->deadTarget.x)
           ch->pos.x--;
