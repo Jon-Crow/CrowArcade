@@ -1,6 +1,8 @@
 
 #include "pac_man.h"
 
+#include <limits.h>
+
 #include "../resources.h"
 #include "../game.h"
 
@@ -19,10 +21,10 @@ typedef struct PacManGhost PacManGhost;
 typedef struct PacManPlayer PacManPlayer;
 typedef struct PacManScreenData PacManScreenData;
 
-typedef void (*PacManCharUpdate)(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data, int col, int row);
-typedef void (*PacManCharRender)(CGL_Context *ctx, PacManChar *ch);
+typedef void (*PacManCharUpdateFunc)(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data);
+typedef void (*PacManCharRenderFunc)(CGL_Context *ctx, PacManChar *ch);
 
-typedef void (*GhostAIUpdate)(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, int col, int row);
+typedef void (*PacManGhostTargetFunc)(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, Vector2I *target);
 
 typedef enum {
   START_DELAY,
@@ -40,16 +42,19 @@ typedef enum {
 } PacManGhostState;
 
 typedef enum {
-  UP    = 0,
-  LEFT  = 1,
-  DOWN  = 2,
-  RIGHT = 3
+  DIRECTION_MIN = 0,
+  UP = DIRECTION_MIN,
+  LEFT,
+  DOWN,
+  RIGHT,
+  DIRECTION_MAX = RIGHT
 } PacManDirection;
 
 struct PacManChar {
-  PacManCharUpdate updateFunc;
-  PacManCharRender renderFunc;
+  PacManCharUpdateFunc updateFunc;
+  PacManCharRenderFunc renderFunc;
   Vector2I pos;
+  Vector2I tilePos;
   PacManDirection dir;
   bool canMove[4];
   CGL_Animation *anims[4];
@@ -57,7 +62,7 @@ struct PacManChar {
 
 struct PacManGhost {
   PacManChar charData;
-  GhostAIUpdate aiFunc;
+  PacManGhostTargetFunc targetFunc;
   PacManGhostState state;
   int jailTimer;
 };
@@ -75,11 +80,34 @@ struct PacManScreenData {
   PacManGhost ghosts[PAC_MAN_GHOST_COUNT];
 };
 
-void PlayerUpdate(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data, int col, int row)
+PacManDirection GetOppositeDirection(PacManDirection dir)
 {
-  PacManMazeCellType curCell = PacManLevelGetCellAt(data->lvl, col, row);
+  switch(dir)
+  {
+    case UP:    return DOWN;
+    case LEFT:  return RIGHT;
+    case DOWN:  return UP;
+    case RIGHT: return LEFT;
+    default:    return UP;
+  }
+}
+
+void GetTileInDirection(PacManDirection dir, const Vector2I *src, Vector2I *dst)
+{
+  switch(dir)
+  {
+    case UP:    *dst = (Vector2I){.x = src->x,   .y = src->y-1}; break;
+    case LEFT:  *dst = (Vector2I){.x = src->x-1, .y = src->y};   break;
+    case DOWN:  *dst = (Vector2I){.x = src->x,   .y = src->y+1}; break;
+    case RIGHT: *dst = (Vector2I){.x = src->x+1, .y = src->y};   break;
+  }
+}
+
+void PlayerUpdate(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data)
+{
+  PacManMazeCellType curCell = PacManLevelGetCellAt(data->lvl, ch->tilePos.x, ch->tilePos.y);
   if(curCell == DOT || curCell == SUPER_DOT)
-    PacManLevelSetCellAt(data->lvl, col, row, EMPTY);
+    PacManLevelSetCellAt(data->lvl, ch->tilePos.x, ch->tilePos.y, EMPTY);
 
   if(CGL_ContextGetInput(ctx, CGL_INPUT_UP))
   {
@@ -103,29 +131,63 @@ void PlayerUpdate(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data, int 
   }
 }
 
-void GhostUpdate(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data, int col, int row)
+void GhostUpdate(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data)
 {
-  for(int i = 0; i < PAC_MAN_GHOST_COUNT; i++)
+  PacManGhost *ghost = NULL;
+
+  //FIX ME: This is not a good way to do this, but will work for now.
+  //Might ditch the target callback altogether, seems overkill
+  for(int i = 0; i < PAC_MAN_GHOST_COUNT && ghost == NULL; i++)
   {
-    //FIX ME: This is not a good way to do this, but will work for now.
     if(ch == &(data->ghosts[i].charData))
+      ghost = &(data->ghosts[i]);
+  }
+
+  if(ghost == NULL)
+  {
+    printf("WARNING: GhostUpdate was called, but ghost wasn't found.\n");
+    return;
+  }
+
+  if(ghost->state == NORMAL)
+  {
+    Vector2I target;
+    Vector2I nextTile;
+    PacManDirection minDir = DIRECTION_MIN;
+    int minDist = INT_MAX;
+
+    ghost->targetFunc(ghost, ctx, data, &target);
+
+    for(int i = DIRECTION_MIN; i <= DIRECTION_MAX; i++)
     {
-      data->ghosts[i].aiFunc(&(data->ghosts[i]), ctx, data, col, row);
-      return;
+      if(ch->canMove[i] && (PacManDirection)i != GetOppositeDirection(ch->dir))
+      {
+        GetTileInDirection(i, &(ch->tilePos), &nextTile);
+        int dist = DistanceSquaredVector2I(&target, &nextTile);
+        if(dist < minDist)
+        {
+          minDist = dist;
+          minDir = i;
+        }
+      }
     }
+
+    ch->dir = minDir;
   }
 }
 
-void BlinkyUpdate(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, int col, int row)
+void GetBlinkyTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, Vector2I *target)
+{
+  *target = data->plyr.charData.tilePos;
+}
+
+void GetPinkyTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, Vector2I *target)
 {}
 
-void PinkyUpdate(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, int col, int row)
+void GetInkyTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, Vector2I *target)
 {}
 
-void InkyUpdate(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, int col, int row)
-{}
-
-void ClydeUpdate(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, int col, int row)
+void GetClydeTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, Vector2I *target)
 {}
 
 CGL_Animation* GetCharAnimation(const PacManChar *ch)
@@ -139,15 +201,17 @@ void UpdateChar(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data)
 
   if(ch->pos.x % 8 == 0 && ch->pos.y % 8 == 0)
   {
-    int col = ch->pos.x / 8;
-    int row = ch->pos.y / 8;
+    ch->tilePos = (Vector2I){
+      .x = ch->pos.x / 8,
+      .y = ch->pos.y / 8
+    };
 
-    ch->canMove[UP]    = PacManLevelGetCellAt(data->lvl, col, row-1) != WALL;
-    ch->canMove[LEFT]  = PacManLevelGetCellAt(data->lvl, col-1, row) != WALL;
-    ch->canMove[DOWN]  = PacManLevelGetCellAt(data->lvl, col, row+1) != WALL;
-    ch->canMove[RIGHT] = PacManLevelGetCellAt(data->lvl, col+1, row) != WALL;
+    ch->canMove[UP]    = PacManLevelGetCellAt(data->lvl, ch->tilePos.x,   ch->tilePos.y-1) != WALL;
+    ch->canMove[LEFT]  = PacManLevelGetCellAt(data->lvl, ch->tilePos.x-1, ch->tilePos.y)   != WALL;
+    ch->canMove[DOWN]  = PacManLevelGetCellAt(data->lvl, ch->tilePos.x,   ch->tilePos.y+1) != WALL;
+    ch->canMove[RIGHT] = PacManLevelGetCellAt(data->lvl, ch->tilePos.x+1, ch->tilePos.y)   != WALL;
 
-    ch->updateFunc(ch, ctx, data, col, row);
+    ch->updateFunc(ch, ctx, data);
   }
 
   if(ch->canMove[ch->dir])
@@ -233,7 +297,7 @@ void PacManScreenSetLevel(CGL_Screen *screen, PacManLevel *lvl)
     .x = 104,
     .y = 88
   };
-  data->ghosts[PAC_MAN_GHOST_BLINKY].state = DISPERSE;
+  data->ghosts[PAC_MAN_GHOST_BLINKY].state = NORMAL;
   data->ghosts[PAC_MAN_GHOST_BLINKY].jailTimer = 0;
 
   //PINKY
@@ -320,19 +384,19 @@ int PacManScreenInit(CGL_Screen *screen)
 
   //BLINKY
   InitGhostAnims(ghostSheet, &(data->ghosts[PAC_MAN_GHOST_BLINKY].charData), 0);
-  data->ghosts[PAC_MAN_GHOST_BLINKY].aiFunc = BlinkyUpdate;
+  data->ghosts[PAC_MAN_GHOST_BLINKY].targetFunc = GetBlinkyTarget;
 
   //PINKY
   InitGhostAnims(ghostSheet, &(data->ghosts[PAC_MAN_GHOST_PINKY].charData), 1);
-  data->ghosts[PAC_MAN_GHOST_PINKY].aiFunc = PinkyUpdate;
+  data->ghosts[PAC_MAN_GHOST_PINKY].targetFunc = GetPinkyTarget;
 
   //INKY
   InitGhostAnims(ghostSheet, &(data->ghosts[PAC_MAN_GHOST_INKY].charData), 2);
-  data->ghosts[PAC_MAN_GHOST_INKY].aiFunc = InkyUpdate;
+  data->ghosts[PAC_MAN_GHOST_INKY].targetFunc = GetInkyTarget;
 
   //CLYDE
   InitGhostAnims(ghostSheet, &(data->ghosts[PAC_MAN_GHOST_CLYDE].charData), 3);
-  data->ghosts[PAC_MAN_GHOST_CLYDE].aiFunc = ClydeUpdate;
+  data->ghosts[PAC_MAN_GHOST_CLYDE].targetFunc = GetClydeTarget;
 
   CGL_ScreenSetData(screen, data);
   return 0;

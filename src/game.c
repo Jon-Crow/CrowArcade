@@ -22,3 +22,11 @@ bool ParseVector2I(cJSON *json, Vector2I *v)
 
   return true;
 }
+
+int DistanceSquaredVector2I(const Vector2I *v1, const Vector2I *v2)
+{
+  int dx = v1->x - v2->x;
+  int dy = v1->y - v2->y;
+
+  return dx*dx + dy*dy;
+}

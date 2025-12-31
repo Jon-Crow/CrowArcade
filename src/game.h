@@ -18,4 +18,6 @@ struct Vector2I {
 
 bool ParseVector2I(cJSON *json, Vector2I *v);
 
+int DistanceSquaredVector2I(const Vector2I *v1, const Vector2I *v2);
+
 #endif
