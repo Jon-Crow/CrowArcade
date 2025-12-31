@@ -50,16 +50,21 @@ typedef enum {
   DIRECTION_MAX = RIGHT
 } PacManDirection;
 
+#define PAC_MAN_DIRECTION_COUNT ((DIRECTION_MAX - DIRECTION_MIN) + 1)
+
 struct PacManChar {
   PacManCharUpdateFunc updateFunc;
   PacManCharRenderFunc renderFunc;
   uint16_t speed;     // Speed mask is 1 bit inside a byte, that shifts left every frame
   uint16_t speedMask; // If speed masked with speedMask is 1, then the character will move.
+  bool dead;
+  Vector2I deadTarget;
   Vector2I pos;
   Vector2I tilePos;
   PacManDirection dir;
-  bool canMove[4];
-  CGL_Animation *anims[4];
+  bool canMove[PAC_MAN_DIRECTION_COUNT];
+  CGL_Animation *anims[PAC_MAN_DIRECTION_COUNT];
+  CGL_Animation *deadAnims[PAC_MAN_DIRECTION_COUNT];
 };
 
 struct PacManGhost {
@@ -194,12 +199,40 @@ void GetClydeTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data
 
 CGL_Animation* GetCharAnimation(const PacManChar *ch)
 {
+  if(ch->dead)
+    return ch->deadAnims[ch->dir];
   return ch->anims[ch->dir];
 }
 
 void UpdateChar(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data)
 {
-  CGL_AnimationUpdate(GetCharAnimation(ch));
+  if(ch->dead)
+  {
+    CGL_AnimationUpdate(GetCharAnimation(ch));
+
+    if(!IsEqualVector2I(&(ch->pos), &(ch->deadTarget)))
+    {
+      Vector2I diff;
+      SubtractVector2I(&(ch->deadTarget), &(ch->pos), &diff);
+      AbsVector2I(&diff, &diff);
+
+      if(diff.y > diff.x)
+      {
+        if(ch->pos.x > ch->deadTarget.x)
+          ch->pos.x--;
+        else
+          ch->pos.x++;
+      }
+      else
+      {
+        if(ch->pos.y > ch->deadTarget.y)
+          ch->pos.y--;
+        else
+          ch->pos.y++;
+      }
+    }
+    return;
+  }
 
   if(ch->pos.x % 8 == 0 && ch->pos.y % 8 == 0)
   {
@@ -216,9 +249,11 @@ void UpdateChar(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data)
     ch->updateFunc(ch, ctx, data);
   }
 
-  if(ch->speed & ch->speedMask)
+  if(ch->canMove[ch->dir])
   {
-    if(ch->canMove[ch->dir])
+    CGL_AnimationUpdate(GetCharAnimation(ch));
+
+    if(ch->speed & ch->speedMask)
     {
       switch(ch->dir)
       {
@@ -280,6 +315,11 @@ void InitGhostAnims(CGL_SpriteSheet *sheet, PacManChar *ch, int row)
   CGL_SpriteSheetGetSpriteAt(sheet, 5, row, CGL_AnimationGetFrame(ch->anims[UP], 1));
   CGL_SpriteSheetGetSpriteAt(sheet, 6, row, CGL_AnimationGetFrame(ch->anims[DOWN], 0));
   CGL_SpriteSheetGetSpriteAt(sheet, 7, row, CGL_AnimationGetFrame(ch->anims[DOWN], 1));
+
+  CGL_SpriteSheetGetSpriteAt(sheet, 4, 4, CGL_AnimationGetFrame(ch->deadAnims[RIGHT], 0));
+  CGL_SpriteSheetGetSpriteAt(sheet, 5, 4, CGL_AnimationGetFrame(ch->deadAnims[LEFT], 0));
+  CGL_SpriteSheetGetSpriteAt(sheet, 6, 4, CGL_AnimationGetFrame(ch->deadAnims[UP], 0));
+  CGL_SpriteSheetGetSpriteAt(sheet, 7, 4, CGL_AnimationGetFrame(ch->deadAnims[DOWN], 0));
 }
 
 void PacManScreenSetLevel(CGL_Screen *screen, PacManLevel *lvl)
@@ -295,55 +335,39 @@ void PacManScreenSetLevel(CGL_Screen *screen, PacManLevel *lvl)
   data->state = START_DELAY;
   data->timer = 0;
 
-  //PLAYER
+  //Reset player
   PacManLevelGetSpawn(lvl, &(data->plyr.charData.pos));
   data->plyr.charData.dir = LEFT;
   data->plyr.charData.speedMask = 1;
   data->plyr.lives = 5;
 
-  //BLINKY
-  data->ghosts[PAC_MAN_GHOST_BLINKY].charData.dir = UP;
-  //FIX ME: need to pull this from level
+  //reset ghosts
+  for(int i = 0; i < PAC_MAN_GHOST_COUNT; i++)
+  {
+    data->ghosts[i].charData.dir = UP;
+    //FIX ME: need to pull this from level
+    data->ghosts[i].charData.pos = (Vector2I){
+      .x = 76 + 16*i,
+      .y = 112
+    };
+    data->ghosts[i].charData.tilePos = (Vector2I){
+      .x = 0,
+      .y = 0
+    };
+    data->ghosts[i].charData.dead = true;
+    data->ghosts[i].charData.deadTarget = data->ghosts[i].charData.pos;
+
+    data->ghosts[i].charData.speedMask = 1;
+    data->ghosts[i].state = JAIL;
+    data->ghosts[i].jailTimer = 120*i;
+  }
+
   data->ghosts[PAC_MAN_GHOST_BLINKY].charData.pos = (Vector2I){
     .x = 104,
     .y = 88
   };
-  data->ghosts[PAC_MAN_GHOST_BLINKY].charData.speedMask = 1;
+  data->ghosts[PAC_MAN_GHOST_BLINKY].charData.dead = false;
   data->ghosts[PAC_MAN_GHOST_BLINKY].state = NORMAL;
-  data->ghosts[PAC_MAN_GHOST_BLINKY].jailTimer = 0;
-
-  //PINKY
-  data->ghosts[PAC_MAN_GHOST_PINKY].charData.dir = UP;
-  //FIX ME: need to pull this from level
-  data->ghosts[PAC_MAN_GHOST_PINKY].charData.pos = (Vector2I){
-    .x = 88,
-    .y = 112
-  };
-  data->ghosts[PAC_MAN_GHOST_PINKY].charData.speedMask = 1;
-  data->ghosts[PAC_MAN_GHOST_PINKY].state = JAIL;
-  data->ghosts[PAC_MAN_GHOST_PINKY].jailTimer = 120;
-
-  //INKY
-  data->ghosts[PAC_MAN_GHOST_INKY].charData.dir = UP;
-  //FIX ME: need to pull this from level
-  data->ghosts[PAC_MAN_GHOST_INKY].charData.pos = (Vector2I){
-    .x = 104,
-    .y = 112
-  };
-  data->ghosts[PAC_MAN_GHOST_INKY].charData.speedMask = 1;
-  data->ghosts[PAC_MAN_GHOST_INKY].state = JAIL;
-  data->ghosts[PAC_MAN_GHOST_INKY].jailTimer = 240;
-
-  //CLYDE
-  data->ghosts[PAC_MAN_GHOST_CLYDE].charData.dir = UP;
-  //FIX ME: need to pull this from level
-  data->ghosts[PAC_MAN_GHOST_CLYDE].charData.pos = (Vector2I){
-    .x = 120,
-    .y = 112
-  };
-  data->ghosts[PAC_MAN_GHOST_CLYDE].charData.speedMask = 1;
-  data->ghosts[PAC_MAN_GHOST_CLYDE].state = JAIL;
-  data->ghosts[PAC_MAN_GHOST_CLYDE].jailTimer = 360;
 }
 
 int PacManScreenInit(CGL_Screen *screen)
@@ -360,18 +384,24 @@ int PacManScreenInit(CGL_Screen *screen)
   data->plyr.charData.renderFunc = PlayerRender;
   data->plyr.charData.speed = 0xFFFF;
 
-  for(int i = 0; i < 4; i++)
+  for(int i = 0; i < PAC_MAN_DIRECTION_COUNT; i++)
   {
     data->plyr.charData.anims[i] = CGL_InitAnimation(3, 4, true);
     data->plyr.charData.canMove[i] = false;
     if(data->plyr.charData.anims[i] == NULL)
       return -1;
+    data->plyr.charData.deadAnims[i] = NULL;
 
     for(int g = 0; g < PAC_MAN_GHOST_COUNT; g++)
     {
-      data->ghosts[g].charData.anims[i] = CGL_InitAnimation(2, 5, true);
       data->ghosts[g].charData.canMove[i] = false;
+
+      data->ghosts[g].charData.anims[i] = CGL_InitAnimation(2, 5, true);
       if(data->ghosts[g].charData.anims[i] == NULL)
+        return -1;
+
+      data->ghosts[g].charData.deadAnims[i] = CGL_InitAnimation(1, 1000, true);
+      if(data->ghosts[g].charData.deadAnims[i] == NULL)
         return -1;
     }
   }
