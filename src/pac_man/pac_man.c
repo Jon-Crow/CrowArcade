@@ -53,6 +53,8 @@ typedef enum {
 struct PacManChar {
   PacManCharUpdateFunc updateFunc;
   PacManCharRenderFunc renderFunc;
+  uint16_t speed;     // Speed mask is 1 bit inside a byte, that shifts left every frame
+  uint16_t speedMask; // If speed masked with speedMask is 1, then the character will move.
   Vector2I pos;
   Vector2I tilePos;
   PacManDirection dir;
@@ -214,35 +216,43 @@ void UpdateChar(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data)
     ch->updateFunc(ch, ctx, data);
   }
 
-  if(ch->canMove[ch->dir])
+  if(ch->speed & ch->speedMask)
   {
-    switch(ch->dir)
+    if(ch->canMove[ch->dir])
     {
-      case UP:
-        ch->pos.y--;
-        if(ch->pos.y < 0)
-          ch->pos.y = PAC_MAN_LEVEL_HEIGHT-1;
-        break;
+      switch(ch->dir)
+      {
+        case UP:
+          ch->pos.y--;
+          if(ch->pos.y < 0)
+            ch->pos.y = PAC_MAN_LEVEL_HEIGHT-1;
+          break;
 
-      case LEFT:
-        ch->pos.x--;
-        if(ch->pos.x < 0)
-          ch->pos.x = PAC_MAN_LEVEL_WIDTH-1;
-        break;
+        case LEFT:
+          ch->pos.x--;
+          if(ch->pos.x < 0)
+            ch->pos.x = PAC_MAN_LEVEL_WIDTH-1;
+          break;
 
-      case DOWN:
-        ch->pos.y++;
-        if(ch->pos.y >= PAC_MAN_LEVEL_HEIGHT)
-          ch->pos.y = 0;
-        break;
+        case DOWN:
+          ch->pos.y++;
+          if(ch->pos.y >= PAC_MAN_LEVEL_HEIGHT)
+            ch->pos.y = 0;
+          break;
 
-      case RIGHT:
-        ch->pos.x++;
-        if(ch->pos.x >= PAC_MAN_LEVEL_WIDTH)
-          ch->pos.x = 0;
-        break;
+        case RIGHT:
+          ch->pos.x++;
+          if(ch->pos.x >= PAC_MAN_LEVEL_WIDTH)
+            ch->pos.x = 0;
+          break;
+      }
     }
   }
+
+  if(ch->speedMask == 0x8000)
+    ch->speedMask = 1;
+  else
+    ch->speedMask = (ch->speedMask << 1);
 }
 
 void PlayerRender(CGL_Context *ctx, PacManChar *ch)
@@ -288,6 +298,7 @@ void PacManScreenSetLevel(CGL_Screen *screen, PacManLevel *lvl)
   //PLAYER
   PacManLevelGetSpawn(lvl, &(data->plyr.charData.pos));
   data->plyr.charData.dir = LEFT;
+  data->plyr.charData.speedMask = 1;
   data->plyr.lives = 5;
 
   //BLINKY
@@ -297,6 +308,7 @@ void PacManScreenSetLevel(CGL_Screen *screen, PacManLevel *lvl)
     .x = 104,
     .y = 88
   };
+  data->ghosts[PAC_MAN_GHOST_BLINKY].charData.speedMask = 1;
   data->ghosts[PAC_MAN_GHOST_BLINKY].state = NORMAL;
   data->ghosts[PAC_MAN_GHOST_BLINKY].jailTimer = 0;
 
@@ -307,6 +319,7 @@ void PacManScreenSetLevel(CGL_Screen *screen, PacManLevel *lvl)
     .x = 88,
     .y = 112
   };
+  data->ghosts[PAC_MAN_GHOST_PINKY].charData.speedMask = 1;
   data->ghosts[PAC_MAN_GHOST_PINKY].state = JAIL;
   data->ghosts[PAC_MAN_GHOST_PINKY].jailTimer = 120;
 
@@ -317,6 +330,7 @@ void PacManScreenSetLevel(CGL_Screen *screen, PacManLevel *lvl)
     .x = 104,
     .y = 112
   };
+  data->ghosts[PAC_MAN_GHOST_INKY].charData.speedMask = 1;
   data->ghosts[PAC_MAN_GHOST_INKY].state = JAIL;
   data->ghosts[PAC_MAN_GHOST_INKY].jailTimer = 240;
 
@@ -327,6 +341,7 @@ void PacManScreenSetLevel(CGL_Screen *screen, PacManLevel *lvl)
     .x = 120,
     .y = 112
   };
+  data->ghosts[PAC_MAN_GHOST_CLYDE].charData.speedMask = 1;
   data->ghosts[PAC_MAN_GHOST_CLYDE].state = JAIL;
   data->ghosts[PAC_MAN_GHOST_CLYDE].jailTimer = 360;
 }
@@ -343,6 +358,7 @@ int PacManScreenInit(CGL_Screen *screen)
 
   data->plyr.charData.updateFunc = PlayerUpdate;
   data->plyr.charData.renderFunc = PlayerRender;
+  data->plyr.charData.speed = 0xFFFF;
 
   for(int i = 0; i < 4; i++)
   {
@@ -380,6 +396,7 @@ int PacManScreenInit(CGL_Screen *screen)
   {
     data->ghosts[i].charData.updateFunc = GhostUpdate;
     data->ghosts[i].charData.renderFunc = GhostRender;
+    data->ghosts[i].charData.speed = 0xFFFE;
   }
 
   //BLINKY
