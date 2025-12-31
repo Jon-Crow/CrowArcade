@@ -22,7 +22,7 @@ typedef struct PacManPlayer PacManPlayer;
 typedef struct PacManScreenData PacManScreenData;
 
 typedef void (*PacManCharUpdateFunc)(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data);
-typedef void (*PacManCharRenderFunc)(CGL_Context *ctx, PacManChar *ch);
+typedef void (*PacManCharRenderFunc)(CGL_Context *ctx, PacManChar *ch, PacManScreenData *data);
 
 typedef void (*PacManGhostTargetFunc)(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, Vector2I *target);
 
@@ -290,19 +290,35 @@ void UpdateChar(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data)
     ch->speedMask = (ch->speedMask << 1);
 }
 
-void PlayerRender(CGL_Context *ctx, PacManChar *ch)
+void PlayerRender(CGL_Context *ctx, PacManChar *ch, PacManScreenData *data)
 {
   CGL_DrawAnimation(ctx, GetCharAnimation(ch), ch->pos.x + PAC_MAN_LEVEL_X - 4, ch->pos.y + PAC_MAN_LEVEL_Y - 4, 16, 16);
 }
 
-void GhostRender(CGL_Context *ctx, PacManChar *ch)
+void GhostRender(CGL_Context *ctx, PacManChar *ch, PacManScreenData *data)
 {
-  CGL_DrawAnimation(ctx, GetCharAnimation(ch), ch->pos.x + PAC_MAN_LEVEL_X - 4, ch->pos.y + PAC_MAN_LEVEL_Y - 4, 16, 16);
+  //FIX ME: This is not a good way to do this, but will work for now.
+  for(int i = 0; i < PAC_MAN_GHOST_COUNT; i++)
+  {
+    if(ch == &(data->ghosts[i].charData))
+    {
+      PacManGhost *ghost = &(data->ghosts[i]);
+      CGL_Animation *anim;
+
+      if(ghost->state == EYEBALLS)
+        anim = ch->deadAnims[ch->dir];
+      else
+        anim = ch->anims[ch->dir];
+
+      CGL_DrawAnimation(ctx, anim, ch->pos.x + PAC_MAN_LEVEL_X - 4, ch->pos.y + PAC_MAN_LEVEL_Y - 4, 16, 16);
+      return;
+    }
+  }
 }
 
-void RenderChar(CGL_Context *ctx, PacManChar *ch)
+void RenderChar(CGL_Context *ctx, PacManChar *ch, PacManScreenData *data)
 {
-  ch->renderFunc(ctx, ch);
+  ch->renderFunc(ctx, ch, data);
 }
 
 void InitGhostAnims(CGL_SpriteSheet *sheet, PacManChar *ch, int row)
@@ -383,6 +399,7 @@ int PacManScreenInit(CGL_Screen *screen)
   data->plyr.charData.updateFunc = PlayerUpdate;
   data->plyr.charData.renderFunc = PlayerRender;
   data->plyr.charData.speed = 0xFFFF;
+  data->plyr.charData.dead = false;
 
   for(int i = 0; i < PAC_MAN_DIRECTION_COUNT; i++)
   {
@@ -479,9 +496,9 @@ void PacManScreenRender(CGL_Screen *screen, CGL_Context *ctx)
     return;
 
   PacManLevelRender(ctx, data->lvl, PAC_MAN_LEVEL_X, PAC_MAN_LEVEL_Y);
-  RenderChar(ctx, &(data->plyr.charData));
+  RenderChar(ctx, &(data->plyr.charData), data);
   for(int i = 0; i < PAC_MAN_GHOST_COUNT; i++)
-    RenderChar(ctx, &(data->ghosts[i].charData));
+    RenderChar(ctx, &(data->ghosts[i].charData), data);
 }
 
 void PacManScreenDestroy(CGL_Screen *screen)
