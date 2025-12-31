@@ -29,16 +29,16 @@ bool InitResources(CGL_Context *ctx)
 
   char strBuff[128];
 
-  printf("Checking textures:\n");
+  CGL_LogInfo("Checking textures:");
   for(int i = 0; i < TEXTURE_COUNT; i++)
   {
     if(res.tx[i] == NULL)
     {
-      printf("ERROR: Texture %d was NULL.\n", i);
+      CGL_LogError("Texture %d was NULL.", i);
       return false;
     }
     CGL_TextureToString(res.tx[i], strBuff, 128);
-    printf("#%d: %s\n", i, strBuff);
+    CGL_LogInfo("#%d: %s", i, strBuff);
   }
 
   res.sheets[SPRITE_SHEET_SPLASH_SCREEN]  = CGL_CreateSpriteSheet(res.tx[TEXTURE_SPLASH_SCREEN],  SPRITE_SHEET_SPLASH_SCREEN_SPRITE_WIDTH,  SPRITE_SHEET_SPLASH_SCREEN_SPRITE_HEIGHT);  /**<  */
@@ -48,16 +48,16 @@ bool InitResources(CGL_Context *ctx)
   res.sheets[SPRITE_SHEET_PAC_MAN_LEVELS] = CGL_CreateSpriteSheet(res.tx[TEXTURE_PAC_MAN_LEVELS], SPRITE_SHEET_PAC_MAN_LEVELS_SPRITE_WIDTH, SPRITE_SHEET_PAC_MAN_LEVELS_SPRITE_HEIGHT); /**<  */
   res.sheets[SPRITE_SHEET_FROGGER_FROG]   = CGL_CreateSpriteSheet(res.tx[TEXTURE_FROGGER_FROG],   SPRITE_SHEET_FROGGER_FROG_SPRITE_WIDTH,   SPRITE_SHEET_FROGGER_FROG_SPRITE_HEIGHT);   /**<  */
 
-  printf("Checking sprite sheets:\n");
+  CGL_LogInfo("Checking sprite sheets:");
   for(int i = 0; i < SPRITE_SHEET_COUNT; i++)
   {
     if(res.sheets[i] == NULL)
     {
-      printf("ERROR: Sprite sheet %d was NULL.\n", i);
+      CGL_LogError("Sprite sheet %d was NULL.", i);
       return false;
     }
     CGL_SpriteSheetToString(res.sheets[i], strBuff, 128);
-    printf("#%d: %s\n", i, strBuff);
+    CGL_LogInfo("#%d: %s", i, strBuff);
   }
 
   res.fonts[FONT_PAC_MAN] = CGL_CreateFont(res.sheets[SPRITE_SHEET_PAC_MAN_FONT], FONT_PAC_MAN_CHARS);
@@ -66,7 +66,7 @@ bool InitResources(CGL_Context *ctx)
   {
     if(res.fonts[i] == NULL)
     {
-      printf("ERROR: Font %d was NULL.\n", i);
+      CGL_LogError("ERROR: Font %d was NULL.", i);
       return false;
     }
   }

@@ -13,7 +13,13 @@ struct SplashScreenData {
 int SplashScreenInit(CGL_Screen *screen)
 {
   CGL_SpriteSheet *sheet = ResourcesGetSpriteSheet(SPRITE_SHEET_SPLASH_SCREEN);
-  CGL_Animation *splash = CGL_AnimationFromRows(sheet, 0, 2, 1, false); //FIX ME: Frame time should be 7
+
+#ifdef DEBUG
+  CGL_Animation *splash = CGL_AnimationFromRows(sheet, 0, 2, 1, false);
+#else
+  CGL_Animation *splash = CGL_AnimationFromRows(sheet, 0, 2, 5, false);
+#endif
+
   if(splash == NULL)
     return -1;
   
@@ -38,7 +44,7 @@ void SplashScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
 
   if(CGL_AnimationIsDone(data->splash))
   {
-    printf("switching to menu screen\n");
+    CGL_LogInfo("switching to menu screen");
     CGL_Screen *menu = CGL_CreateScreen(MenuScreenInit,
                                         MenuScreenUpdate,
                                         MenuScreenRender,
@@ -51,7 +57,7 @@ void SplashScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
       CGL_DestroyScreen(screen);
     }
     else
-      printf("Failed to create menu screen.\n");
+      CGL_LogError("Failed to create menu screen.");
   }
 }
 

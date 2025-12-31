@@ -8,6 +8,8 @@
 
 #include "cgl_animation.h"
 
+#include "cgl_log.h"
+
 /**
 *@brief Holds frames and settings for an animation
 */
@@ -71,7 +73,8 @@ CGL_Animation* CGL_AnimationFromRows(CGL_SpriteSheet* sheet, int startRow, int e
 {
   int cols = CGL_SpriteSheetGetColumns(sheet);
   size_t frameCount = cols * (endRow - startRow);
-  printf("Creating animation. Sheet has %d columns.\nFrame count: %zu\n", cols, frameCount);
+  CGL_LogInfo("Creating animation. Sheet has %d columns.", cols);
+  CGL_LogInfo("Frame count: %zu", frameCount);
   
   CGL_Animation *anim = CGL_InitAnimation(frameCount, frameTime, loop);
   if(anim == NULL)

@@ -64,14 +64,14 @@ int MenuScreenInit(CGL_Screen *screen)
     PacManLevel *lvl = LoadPacManLevel("res/json/pac_man/level0.json");
     if(lvl != NULL)
     {
-      printf("Successfully parsed level json.\n");
+      CGL_LogInfo("Successfully parsed level json.");
       PacManScreenSetLevel(pacManScreen, lvl);
     }
     else
-      printf("Failed to parse level json!\n");
+      CGL_LogError("Failed to parse level json!");
   }
   else
-    printf("ERROR: Failed to create Pac-Man screen!\n");
+    CGL_LogError("ERROR: Failed to create Pac-Man screen!");
 
   CGL_Animation *leftFrogAnim = NULL;
   CGL_Animation *rightFrogAnim = NULL;
@@ -135,7 +135,7 @@ void MenuScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
     if(opt.screen != NULL)
       CGL_ContextSetScreen(ctx, opt.screen);
     else
-      printf("ERROR: Can't start game, because its screen is NULL!\n");
+      CGL_LogError("ERROR: Can't start game, because its screen is NULL!");
   }
   else if(CGL_ContextInputJustSet(ctx, CGL_INPUT_DOWN))
   {

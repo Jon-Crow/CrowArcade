@@ -147,7 +147,7 @@ void GhostUpdate(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data)
 
   if(ghost == NULL)
   {
-    printf("WARNING: GhostUpdate was called, but ghost wasn't found.\n");
+    CGL_LogWarning("GhostUpdate was called, but ghost wasn't found.");
     return;
   }
 

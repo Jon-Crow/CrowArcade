@@ -19,9 +19,9 @@ PacManLevel* CreatePacManLevel(int lvlCol, int lvlRow, const SDL_Color *dotColor
   CGL_SpriteSheet *lvlSheet = ResourcesGetSpriteSheet(SPRITE_SHEET_PAC_MAN_LEVELS);
   if(!CGL_SpriteSheetIsInBounds(lvlSheet, lvlCol, lvlRow))
   {
-    printf("Provided Pac-Man level texture index out of bounds.\n");
-    printf("Requested: %d,%d\n", lvlCol, lvlRow);
-    printf("Sheet size: %d,%d\n", CGL_SpriteSheetGetColumns(lvlSheet), CGL_SpriteSheetGetRows(lvlSheet));
+    CGL_LogWarning("Provided Pac-Man level texture index out of bounds.");
+    CGL_LogWarning("Requested: %d,%d", lvlCol, lvlRow);
+    CGL_LogWarning("Sheet size: %d,%d", CGL_SpriteSheetGetColumns(lvlSheet), CGL_SpriteSheetGetRows(lvlSheet));
     return NULL;
   }
 
@@ -149,20 +149,20 @@ PacManLevel* LoadPacManLevel(const char *jsonPath)
   if(cJSON_IsNumber(lvlColJson))
     lvlCol = lvlColJson->valueint;
   else
-    printf("ERROR: Level json key missing or invalid: %s\n", PAC_MAN_JSON_KEY_TX_COL);
+    CGL_LogError("Level json key missing or invalid: %s", PAC_MAN_JSON_KEY_TX_COL);
 
   cJSON *lvlRowJson = cJSON_GetObjectItemCaseSensitive(json, PAC_MAN_JSON_KEY_TX_ROW);
   int lvlRow = -1;
   if(cJSON_IsNumber(lvlRowJson))
     lvlRow = lvlRowJson->valueint;
   else
-    printf("ERROR: Level json key missing or invalid: %s\n", PAC_MAN_JSON_KEY_TX_ROW);
+    CGL_LogError("Level json key missing or invalid: %s", PAC_MAN_JSON_KEY_TX_ROW);
 
   PacManMazeCellType maze[PAC_MAN_MAZE_SIZE];
   int dotCount;
   if(!PacManLevelParseMaze(json, maze, &dotCount))
   {
-    printf("ERROR: Level json key missing or invalid: %s\n", PAC_MAN_JSON_KEY_MAZE);
+    CGL_LogError("Level json key missing or invalid: %s", PAC_MAN_JSON_KEY_MAZE);
     cJSON_Delete(json);
     return NULL;
   }
@@ -170,7 +170,7 @@ PacManLevel* LoadPacManLevel(const char *jsonPath)
   SDL_Color dotColor;
   if(!PacManLevelParseDotColor(json, &dotColor))
   {
-    printf("ERROR: Level json key missing or invalid: %s\n", PAC_MAN_JSON_KEY_DOT_COLOR);
+    CGL_LogError("Level json key missing or invalid: %s", PAC_MAN_JSON_KEY_DOT_COLOR);
     cJSON_Delete(json);
     return NULL;
   }
@@ -179,14 +179,14 @@ PacManLevel* LoadPacManLevel(const char *jsonPath)
   Vector2I spawn;
   if(!ParseVector2I(spawnJson, &spawn))
   {
-    printf("ERROR: Level json key missing or invalid: %s\n", PAC_MAN_JSON_KEY_SPAWN);
+    CGL_LogError("Level json key missing or invalid: %s", PAC_MAN_JSON_KEY_SPAWN);
     cJSON_Delete(json);
     return NULL;
   }
 
   cJSON_Delete(json);
 
-  printf("Creating Pac-Man level with map texture at %d, %d\n", lvlCol, lvlRow);
+  CGL_LogInfo("Creating Pac-Man level with map texture at %d, %d", lvlCol, lvlRow);
   PacManLevel *lvl = CreatePacManLevel(lvlCol, lvlRow, &dotColor, &spawn);
   if(lvl == NULL)
     return NULL;

@@ -65,14 +65,13 @@ int main(void)
   int screenW;
   int screenH;
 
-  printf("Initializing SDL... ");
+  CGL_LogInfo("Initializing SDL... ");
 
   if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0)
   {
-    printf("failed: %s\n", SDL_GetError());
+    CGL_LogError("failed: %s", SDL_GetError());
     return -1;
   }
-  printf("done.\n");
 
   SDL_ShowCursor(SDL_DISABLE);
 
@@ -90,15 +89,14 @@ int main(void)
   
   SDL_RenderSetIntegerScale(rend, SDL_TRUE);
 
-  printf("Initializing resources... ");
+  CGL_LogInfo("Initializing resources... ");
   if(!InitResources(ctx))
   {
-    printf("failed: %s\n", SDL_GetError());
+    CGL_LogError("failed: %s", SDL_GetError());
     return -1;
   }
-  printf("done.\n");
 
-  printf("Creating splash screen... ");
+  CGL_LogInfo("Creating splash screen... ");
   screen = CGL_CreateScreen(SplashScreenInit,
                             SplashScreenUpdate,
                             SplashScreenRender,
@@ -106,22 +104,21 @@ int main(void)
                             rend);
   if(screen == NULL)
   {
-    printf("failed: %s\n", SDL_GetError());
+    CGL_LogError("failed: %s", SDL_GetError());
     SDL_DestroyTexture(gameTx);
     SDL_DestroyRenderer(rend);
     SDL_DestroyWindow(win);
     SDL_Quit();
     return -1;
   }
-  printf("done.\n");
 
   CGL_ScreenInit(screen);
   CGL_ContextSetScreen(ctx, screen);
 
-  printf("Initializing splash screen... ");
+  CGL_LogInfo("Initializing splash screen... ");
   if(CGL_ScreenInit(screen))
   {
-    printf("failed: %s\n", SDL_GetError());
+    CGL_LogError("failed: %s", SDL_GetError());
     CGL_DestroyScreen(screen);
     SDL_DestroyTexture(gameTx);
     SDL_DestroyRenderer(rend);
@@ -129,7 +126,6 @@ int main(void)
     SDL_Quit();
     return -1;
   }
-  printf("done.\n");
 
   const uint32_t fps = 60;
   const uint32_t frameDelay = (int)(1000.0f/fps + 0.5f);
@@ -246,7 +242,7 @@ int main(void)
       SDL_Delay(frameDelay - frameTime);
   }
 
-  printf("Exiting\n");
+  CGL_LogInfo("Exiting");
   DestroyResources();
   CGL_DestroyContext(ctx);
   SDL_Quit();

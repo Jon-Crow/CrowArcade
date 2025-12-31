@@ -12,7 +12,7 @@ EXECUTABLE = crow_arcade
 BUILD_TYPE ?= debug
 
 ifeq ($(BUILD_TYPE), debug)
-	GCC_OPTS := -g -O0 -fno-omit-frame-pointer -Wall -Wextra -Wpedantic -Wno-unused-parameter
+	GCC_OPTS := -g -O0 -DDEBUG -fno-omit-frame-pointer -Wall -Wextra -Wpedantic -Wno-unused-parameter
 else
 	GCC_OPTS := -O2 -DNDEBUG -Wall
 endif

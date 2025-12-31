@@ -16,6 +16,7 @@
 #include <SDL2/SDL_image.h>
 
 #include "cgl_macros.h"
+#include "cgl_log.h"
 #include "cgl_graphics.h"
 #include "cgl_screen.h"
 #include "cgl_context.h"

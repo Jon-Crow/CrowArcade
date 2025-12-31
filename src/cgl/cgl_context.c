@@ -9,6 +9,7 @@
 #include "cgl_context.h"
 
 #include "cgl_macros.h"
+#include "cgl_log.h"
 
 /**
 *@brief Holds SDL globals necessary throughout the application
@@ -50,17 +51,16 @@ CGL_Context* CGL_CreateContext()
     ctx->prevInput[i] = false;
   }
 
-  printf("Creating window... ");
+  CGL_LogInfo("Creating window... ");
   if(SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN, &(ctx->win), &(ctx->rend)))
   {
-    printf("failed: %s\n", SDL_GetError());
+    CGL_LogError("failed: %s", SDL_GetError());
     return NULL;
   }
-  printf("done.\n");
 
   SDL_GetRendererOutputSize(ctx->rend, &(ctx->screenW), &(ctx->screenH));
 
-  printf("Creating game texture... ");
+  CGL_LogInfo("Creating game texture... ");
   ctx->gameTx = SDL_CreateTexture(ctx->rend, 
                                   SDL_PIXELFORMAT_RGBA8888, 
                                   SDL_TEXTUREACCESS_TARGET,
@@ -68,10 +68,9 @@ CGL_Context* CGL_CreateContext()
                                   GAME_HEIGHT);
   if(ctx->gameTx == NULL)
   {
-    printf("failed: %s\n", SDL_GetError());
+    CGL_LogError("failed: %s", SDL_GetError());
     return NULL;
   }
-  printf("done.\n");
 
   ctx->screen = NULL;
 
