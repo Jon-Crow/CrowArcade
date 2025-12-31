@@ -30,7 +30,7 @@ struct MenuScreenData {
   int optIdx;
 };
 
-int MenuScreenInit(CGL_Screen *screen)
+int MenuScreenInit(CGL_Screen *screen, CGL_Context *ctx)
 {
   SDL_Renderer *rend = CGL_ScreenGetData(screen);
   if(rend == NULL)
@@ -59,13 +59,13 @@ int MenuScreenInit(CGL_Screen *screen)
                                               rend);
   if(pacManScreen != NULL)
   {
-    CGL_ScreenInit(pacManScreen);
+    CGL_ScreenInit(pacManScreen, ctx);
     //FIX ME: Move this to level select screen eventually
     PacManLevel *lvl = LoadPacManLevel("res/json/pac_man/level0.json");
     if(lvl != NULL)
     {
       CGL_LogInfo("Successfully parsed level json.");
-      PacManScreenSetLevel(pacManScreen, lvl);
+      PacManScreenSetLevel(pacManScreen, lvl, ctx);
     }
     else
       CGL_LogError("Failed to parse level json!");

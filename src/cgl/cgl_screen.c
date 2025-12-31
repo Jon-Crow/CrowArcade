@@ -73,11 +73,11 @@ void CGL_ScreenSetData(CGL_Screen *screen, void *data)
     screen->data = data;
 }
 
-int CGL_ScreenInit(CGL_Screen *screen)
+int CGL_ScreenInit(CGL_Screen *screen, CGL_Context *ctx)
 {
   if(screen == NULL)
     return -1;
-  return screen->init(screen);
+  return screen->init(screen, ctx);
 }
 
 void CGL_ScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)

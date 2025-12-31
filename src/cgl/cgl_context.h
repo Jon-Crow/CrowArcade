@@ -34,6 +34,8 @@ typedef struct CGL_Context CGL_Context;
 */
 CGL_Context* CGL_CreateContext();
 
+SDL_AudioDeviceID CGL_ContextGetAudioDeviceID(CGL_Context *ctx);
+
 /**
 *@param ctx Context to be referenced
 *

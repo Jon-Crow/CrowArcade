@@ -52,11 +52,18 @@
 
 #define FONT_PAC_MAN_CHARS ("ABCDEFGHIJKLMNOPQRSTUVWXYZ!/-\"0123456789 ") /**< Pac man font characters */
 
+#define SOUND_COUNT (1)
+
+#define SOUND_PAC_MAN_START (0)
+
+#define SOUND_PAC_MAN_START_PATH ("res/sound/pac_man/ms_start.wav")
+
 bool InitResources(CGL_Context *ctx);
 
 CGL_Texture* ResourcesGetTexture(size_t idx);
 CGL_SpriteSheet* ResourcesGetSpriteSheet(size_t idx);
 CGL_Font* ResourcesGetFont(size_t idx);
+CGL_Sound* ResourcesGetSound(size_t idx);
 
 cJSON* ResourcesParseJsonFile(const char *path);
 

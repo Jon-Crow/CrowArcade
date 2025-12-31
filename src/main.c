@@ -67,7 +67,7 @@ int main(void)
 
   CGL_LogInfo("Initializing SDL... ");
 
-  if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0)
+  if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_EVENTS) < 0)
   {
     CGL_LogError("failed: %s", SDL_GetError());
     return -1;
@@ -112,11 +112,8 @@ int main(void)
     return -1;
   }
 
-  CGL_ScreenInit(screen);
-  CGL_ContextSetScreen(ctx, screen);
-
   CGL_LogInfo("Initializing splash screen... ");
-  if(CGL_ScreenInit(screen))
+  if(CGL_ScreenInit(screen, ctx))
   {
     CGL_LogError("failed: %s", SDL_GetError());
     CGL_DestroyScreen(screen);
@@ -126,6 +123,7 @@ int main(void)
     SDL_Quit();
     return -1;
   }
+  CGL_ContextSetScreen(ctx, screen);
 
   const uint32_t fps = 60;
   const uint32_t frameDelay = (int)(1000.0f/fps + 0.5f);

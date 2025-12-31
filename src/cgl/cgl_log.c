@@ -18,6 +18,7 @@ const char* CGL_LogGetLevelLabel(CGL_LogLevel lvl)
 
 void CGL_Log(CGL_LogLevel lvl, const char *fmt, ...)
 {
+#ifdef DEBUG
   time_t now = time(NULL);
   struct tm *time = localtime(&now);
   char timeBuff[64];
@@ -32,10 +33,12 @@ void CGL_Log(CGL_LogLevel lvl, const char *fmt, ...)
   va_end(args);
 
   printf("\n");
+#endif
 }
 
 void CGL_VLog(CGL_LogLevel lvl, const char *fmt, va_list args)
 {
+#ifdef DEBUG
   time_t now = time(NULL);
   struct tm *time = localtime(&now);
   char timeBuff[64];
@@ -45,6 +48,7 @@ void CGL_VLog(CGL_LogLevel lvl, const char *fmt, va_list args)
   printf("%s [%s]: ", CGL_LogGetLevelLabel(lvl), timeBuff);
   vprintf(fmt, args);
   printf("\n");
+#endif
 }
 
 void CGL_LogInfo(const char *fmt, ...)

@@ -27,6 +27,7 @@ typedef void (*PacManCharRenderFunc)(CGL_Context *ctx, PacManChar *ch, PacManScr
 typedef void (*PacManGhostTargetFunc)(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, Vector2I *target);
 
 typedef enum {
+  START,
   START_DELAY,
   PLAY,
   DEATH,
@@ -235,10 +236,14 @@ void GetPinkyTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data
 }
 
 void GetInkyTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, Vector2I *target)
-{}
+{
+  *target = (Vector2I){.x = 1, .y = 1};
+}
 
 void GetClydeTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, Vector2I *target)
-{}
+{
+  *target = (Vector2I){.x = 26, .y = 1};
+}
 
 CGL_Animation* GetCharAnimation(const PacManChar *ch)
 {
@@ -385,7 +390,7 @@ void InitGhostAnims(CGL_SpriteSheet *sheet, PacManChar *ch, int row)
   CGL_SpriteSheetGetSpriteAt(sheet, 7, 4, CGL_AnimationGetFrame(ch->deadAnims[DOWN], 0));
 }
 
-void PacManScreenSetLevel(CGL_Screen *screen, PacManLevel *lvl)
+void PacManScreenSetLevel(CGL_Screen *screen, PacManLevel *lvl, CGL_Context *ctx)
 {
   PacManScreenData *data = CGL_ScreenGetData(screen);
   if(data == NULL)
@@ -395,7 +400,7 @@ void PacManScreenSetLevel(CGL_Screen *screen, PacManLevel *lvl)
   if(lvl == NULL)
     return;
 
-  data->state = START_DELAY;
+  data->state = START;
   data->timer = 0;
 
   //Reset player
@@ -433,14 +438,14 @@ void PacManScreenSetLevel(CGL_Screen *screen, PacManLevel *lvl)
   data->ghosts[PAC_MAN_GHOST_BLINKY].state = NORMAL;
 }
 
-int PacManScreenInit(CGL_Screen *screen)
+int PacManScreenInit(CGL_Screen *screen, CGL_Context *ctx)
 {
   PacManScreenData *data = (PacManScreenData*)malloc(sizeof(PacManScreenData));
   if(data == NULL)
     return -1;
 
   data->lvl = NULL;
-  data->state = START_DELAY;
+  data->state = START;
   data->timer = 0;
 
   data->plyr.charData.updateFunc = PlayerUpdate;
@@ -519,15 +524,19 @@ void PacManScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
   if(data->lvl == NULL)
     return;
 
-  if(data->state == START_DELAY)
+  if(data->state == START)
+  {
+    CGL_Sound *intro = ResourcesGetSound(SOUND_PAC_MAN_START);
+    CGL_SoundPlay(intro, ctx);
+    data->state = START_DELAY;
+  }
+  else if(data->state == START_DELAY)
   {
     data->timer++;
-    if(data->timer == 120)
+    if(data->timer == 240)
       data->state = PLAY;
-    return;
   }
-
-  if(data->state == PLAY)
+  else if(data->state == PLAY)
   {
     UpdateChar(&(data->plyr.charData), ctx, data);
     for(int i = 0; i < PAC_MAN_GHOST_COUNT; i++)

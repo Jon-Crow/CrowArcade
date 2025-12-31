@@ -5,9 +5,9 @@
 #include "../cgl/cgl.h"
 #include "pac_level.h"
 
-void PacManScreenSetLevel(CGL_Screen *screen, PacManLevel *lvl);
+void PacManScreenSetLevel(CGL_Screen *screen, PacManLevel *lvl, CGL_Context *ctx);
 
-int PacManScreenInit(CGL_Screen *screen);
+int PacManScreenInit(CGL_Screen *screen, CGL_Context *ctx);
 void PacManScreenUpdate(CGL_Screen *screen, CGL_Context *ctx);
 void PacManScreenRender(CGL_Screen *screen, CGL_Context *ctx);
 void PacManScreenDestroy(CGL_Screen *screen);

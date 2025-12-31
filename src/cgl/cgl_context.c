@@ -15,6 +15,7 @@
 *@brief Holds SDL globals necessary throughout the application
 */
 struct CGL_Context {
+  SDL_AudioDeviceID audioDev;
   SDL_Window *win;                 /**< Handle to the SDL window */
   SDL_Renderer *rend;              /**< Handle to the SDL renderer */
   SDL_Texture *gameTx;
@@ -40,6 +41,7 @@ CGL_Context* CGL_CreateContext()
   if(ctx == NULL)
     return NULL;
 
+  ctx->audioDev = 0;
   ctx->win = NULL;
   ctx->rend = NULL;
   ctx->gameTx = NULL;
@@ -50,6 +52,22 @@ CGL_Context* CGL_CreateContext()
     ctx->input[i] = false;
     ctx->prevInput[i] = false;
   }
+
+  CGL_LogInfo("Opening audo device...");
+  SDL_AudioSpec audioSpec;
+  SDL_zero(audioSpec);
+  audioSpec.freq = 48000;
+  audioSpec.format = AUDIO_S16SYS;
+  audioSpec.channels = 1;
+  audioSpec.samples = 512;
+  audioSpec.callback = NULL;
+  ctx->audioDev = SDL_OpenAudioDevice(NULL, 0, &audioSpec, NULL, 0);
+  if(ctx->audioDev == 0)
+  {
+    CGL_LogError("failed: %s", SDL_GetError());
+    return NULL;
+  }
+  SDL_PauseAudioDevice(ctx->audioDev, 0);
 
   CGL_LogInfo("Creating window... ");
   if(SDL_CreateWindowAndRenderer(SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN, &(ctx->win), &(ctx->rend)))
@@ -75,6 +93,11 @@ CGL_Context* CGL_CreateContext()
   ctx->screen = NULL;
 
   return ctx;
+}
+
+SDL_AudioDeviceID CGL_ContextGetAudioDeviceID(CGL_Context *ctx)
+{
+  return ctx->audioDev;
 }
 
 SDL_Window* CGL_ContextGetWindow(CGL_Context *ctx)
@@ -146,6 +169,8 @@ void CGL_DestroyContext(CGL_Context *ctx)
   if(ctx == NULL)
     return;
 
+  if(ctx->audioDev != 0)
+    SDL_CloseAudioDevice(ctx->audioDev);
   if(ctx->screen != NULL)
     CGL_DestroyScreen(ctx->screen);
   if(ctx->gameTx != NULL)

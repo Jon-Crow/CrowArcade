@@ -10,6 +10,7 @@ struct Resources {
   CGL_Texture *tx[TEXTURE_COUNT];
   CGL_SpriteSheet *sheets[SPRITE_SHEET_COUNT];
   CGL_Font *fonts[FONT_COUNT];
+  CGL_Sound *sounds[SOUND_COUNT];
 };
 
 static Resources res;
@@ -66,7 +67,19 @@ bool InitResources(CGL_Context *ctx)
   {
     if(res.fonts[i] == NULL)
     {
-      CGL_LogError("ERROR: Font %d was NULL.", i);
+      CGL_LogError("Font %d was NULL.", i);
+      return false;
+    }
+  }
+
+  res.sounds[SOUND_PAC_MAN_START] = CGL_LoadSound(SOUND_PAC_MAN_START_PATH, CGL_ContextGetAudioDeviceID(ctx));
+
+  CGL_LogInfo("Checking sounds:");
+  for(int i = 0; i < SOUND_COUNT; i++)
+  {
+    if(res.sounds[i] == NULL)
+    {
+      CGL_LogError("Sound %d was NULL.", i);
       return false;
     }
   }
@@ -93,6 +106,13 @@ CGL_Font* ResourcesGetFont(size_t idx)
   if(idx >= FONT_COUNT)
     return NULL;
   return res.fonts[idx];
+}
+
+CGL_Sound* ResourcesGetSound(size_t idx)
+{
+  if(idx >= SOUND_COUNT)
+    return NULL;
+  return res.sounds[idx];
 }
 
 cJSON* ResourcesParseJsonFile(const char *path)
@@ -145,6 +165,12 @@ void DestroyResources()
   {
     if(res.fonts[i] != NULL)
       CGL_DestroyFont(res.fonts[i]);
+  }
+
+  for(int i = 0; i < SOUND_COUNT; i++)
+  {
+    if(res.sounds[i] != NULL)
+      CGL_DestroySound(res.sounds[i]);
   }
 }
 

@@ -24,5 +24,6 @@
 #include "cgl_spritesheet.h"
 #include "cgl_animation.h"
 #include "cgl_font.h"
+#include "cgl_sound.h"
 
 #endif

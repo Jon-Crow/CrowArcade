@@ -10,7 +10,7 @@ struct SplashScreenData {
   int timer;
 };
 
-int SplashScreenInit(CGL_Screen *screen)
+int SplashScreenInit(CGL_Screen *screen, CGL_Context *ctx)
 {
   CGL_SpriteSheet *sheet = ResourcesGetSpriteSheet(SPRITE_SHEET_SPLASH_SCREEN);
 
@@ -52,7 +52,7 @@ void SplashScreenUpdate(CGL_Screen *screen, CGL_Context *ctx)
                                         CGL_ContextGetRenderer(ctx));
     if(menu != NULL)
     {
-      CGL_ScreenInit(menu);
+      CGL_ScreenInit(menu, ctx);
       CGL_ContextSetScreen(ctx, menu);
       CGL_DestroyScreen(screen);
     }

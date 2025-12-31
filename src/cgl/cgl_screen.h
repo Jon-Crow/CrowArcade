@@ -15,7 +15,7 @@
 typedef struct CGL_Context CGL_Context;
 typedef struct CGL_Screen CGL_Screen;
 
-typedef int (*CGL_InitScreenFunc)(CGL_Screen *screen);                      /**< Screen init function pointer */
+typedef int (*CGL_InitScreenFunc)(CGL_Screen *screen, CGL_Context *ctx);    /**< Screen init function pointer */
 typedef void (*CGL_UpdateScreenFunc)(CGL_Screen *screen, CGL_Context *ctx); /**< Screen update function pointer */
 typedef void (*CGL_RenderScreenFunc)(CGL_Screen *screen, CGL_Context *ctx); /**< Screen render function pointer */
 typedef void (*CGL_DestroyScreenFunc)(CGL_Screen *screen);                  /**< Screen destroy function pointer */
@@ -64,7 +64,7 @@ void CGL_ScreenSetData(CGL_Screen *screen, void *data);
 *
 *@param screen The screen for which the init function is to be called
 */
-int CGL_ScreenInit(CGL_Screen *screen);
+int CGL_ScreenInit(CGL_Screen *screen, CGL_Context *ctx);
 
 /**
 *@brief Call the given screen's update function
