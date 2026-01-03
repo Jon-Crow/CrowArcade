@@ -238,8 +238,23 @@ void GetPinkyTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data
 
 void GetInkyTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, Vector2I *target)
 {
-  Vector2I a = data->plyr.charData.pos;
-  *target = (Vector2I){.x = 1, .y = 1};
+  Vector2I pivot;
+  switch(data->plyr.charData.dir)
+  {
+    case UP:    pivot = (Vector2I){.x = data->plyr.charData.tilePos.x,     .y = data->plyr.charData.tilePos.y - 2}; break;
+    case LEFT:  pivot = (Vector2I){.x = data->plyr.charData.tilePos.x - 2, .y = data->plyr.charData.tilePos.y    }; break;
+    case DOWN:  pivot = (Vector2I){.x = data->plyr.charData.tilePos.x,     .y = data->plyr.charData.tilePos.y + 2}; break;
+    case RIGHT: pivot = (Vector2I){.x = data->plyr.charData.tilePos.x + 2, .y = data->plyr.charData.tilePos.y    }; break;
+    default:    return;
+  }
+
+  int dx = pivot.x - data->ghosts[PAC_MAN_GHOST_BLINKY].charData.tilePos.x;
+  int dy = pivot.y - data->ghosts[PAC_MAN_GHOST_BLINKY].charData.tilePos.y;
+
+  *target = (Vector2I){
+    .x = data->ghosts[PAC_MAN_GHOST_BLINKY].charData.tilePos.x + 2*dx,
+    .y = data->ghosts[PAC_MAN_GHOST_BLINKY].charData.tilePos.y + 2*dy
+  };
 }
 
 void GetClydeTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, Vector2I *target)
