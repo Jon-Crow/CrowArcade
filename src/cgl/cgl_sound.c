@@ -25,7 +25,7 @@ CGL_Sound *CGL_LoadSound(const char *path, SDL_AudioDeviceID dev)
 
 void CGL_SoundPlay(CGL_Sound *sound, CGL_Context *ctx)
 {
-  int succ = SDL_QueueAudio(CGL_ContextGetAudioDeviceID(ctx), sound->buffer, sound->length);
+  SDL_QueueAudio(CGL_ContextGetAudioDeviceID(ctx), sound->buffer, sound->length);
 }
 
 void CGL_DestroySound(CGL_Sound *sound)

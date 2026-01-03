@@ -249,17 +249,11 @@ void PacManLevelRender(CGL_Context *ctx, PacManLevel *lvl, int startX, int start
   {
     for(int x = 0; x < PAC_MAN_MAZE_WIDTH; x++)
     {
-      switch(lvl->maze[idx])
-      {
-        case DOT:
-          CGL_GraphicsDrawFilledRect(ctx, startX + x*8 + 3, startY + y*8 + 3, 2, 2, &lvl->dotColor);
-          break;
-        case SUPER_DOT:
-          CGL_GraphicsDrawFilledCircle(ctx, startX + x*8 + 4, startY + y*8 + 4, 4, &lvl->dotColor);
-          break;
-        
-        default:
-      }
+      if(lvl->maze[idx] == DOT)
+        CGL_GraphicsDrawFilledRect(ctx, startX + x*8 + 3, startY + y*8 + 3, 2, 2, &lvl->dotColor);
+      else if(lvl->maze[idx] == SUPER_DOT)
+        CGL_GraphicsDrawFilledCircle(ctx, startX + x*8 + 4, startY + y*8 + 4, 4, &lvl->dotColor);
+      
       idx++;
     }
   }

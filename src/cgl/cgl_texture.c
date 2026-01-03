@@ -218,6 +218,8 @@ void CGL_TextureToString(CGL_Texture* tx, char *str, size_t strLen)
 
 void CGL_DestroyTexture(CGL_Texture *tx)
 {
+  if(tx->img != NULL)
+    SDL_DestroyTexture(tx->img);
   free(tx);
 }
 

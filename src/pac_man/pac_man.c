@@ -204,7 +204,8 @@ void GhostUpdate(PacManChar *ch, CGL_Context *ctx, PacManScreenData *data)
       {
         GetTileInDirection(i, &(ch->tilePos), &nextTile);
         int dist = DistanceSquaredVector2I(&target, &nextTile);
-        if(dist < minDist)
+
+        if((dist == minDist && rand()%2 == 0) || dist < minDist)
         {
           minDist = dist;
           minDir = i;
@@ -237,6 +238,7 @@ void GetPinkyTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data
 
 void GetInkyTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, Vector2I *target)
 {
+  Vector2I a = data->plyr.charData.pos;
   *target = (Vector2I){.x = 1, .y = 1};
 }
 

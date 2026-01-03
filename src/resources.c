@@ -147,12 +147,7 @@ void DestroyResources()
   for(int i = 0; i < TEXTURE_COUNT; i++)
   {
     if(res.tx[i] != NULL)
-    {
-      SDL_Texture *img = CGL_TextureGetImage(res.tx[i]);
-      if(img != NULL)
-        SDL_DestroyTexture(img);
       CGL_DestroyTexture(res.tx[i]);
-    }
   }
 
   for(int i = 0; i < SPRITE_SHEET_COUNT; i++)
