@@ -259,7 +259,11 @@ void GetInkyTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data,
 
 void GetClydeTarget(PacManGhost *ghost, CGL_Context *ctx, PacManScreenData *data, Vector2I *target)
 {
-  *target = (Vector2I){.x = 26, .y = 1};
+  int dist = DistanceSquaredVector2I(&(ghost->charData.tilePos), &(data->plyr.charData.tilePos));
+  if(dist > 64)
+    *target = data->plyr.charData.tilePos;
+  else
+    *target = (Vector2I){.x = 1, .y = PAC_MAN_MAZE_HEIGHT-2};
 }
 
 CGL_Animation* GetCharAnimation(const PacManChar *ch)
